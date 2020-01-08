@@ -1,34 +1,57 @@
 # Petra
+
 A compiler for Petra programs that emits LLVM.
 
 # Setup
 
 ## Dependencies
-- python3
-- LLVM
+
+  - Python >= 3.7
+  - [llvmlite](https://github.com/numba/llvmlite)
+
+## Quickstart
+
+```
+source setup.sh
+pip install -e .
+./run_tests.sh
+```
 
 ## Installation
-1) Create a virtual environment with `python3 -m venv venv`.
-2) Enter the virtual environment with `source venv/bin/activate`.
-3) Install llvmlite with `pip install llvmlite`.
-4) Locally install Petra for development with `pip install -e .`.
-5) Install mypy with `pip install mypy`.
+
+### With Conda
+
+ 1. Create a Conda environment with `source setup.sh`.
+ 2. Locally install Petra for development with `pip install -e .`.
+ 3. *Optional:* Install development tools (e.g. mypy) with
+    `pip install -r requirements-dev.txt`.
+
+### With Virtual Env
+
+ 1. Create a virtual environment with `python3 -m venv venv`.
+ 2. Enter the virtual environment with `source venv/bin/activate`.
+ 3. Locally install Petra for development with `pip install -e .`.
+ 4. *Optional:* Install development tools (e.g. mypy) with
+    `pip install -r requirements-dev.txt`.
 
 ## Use
-1) Write a Petra program. `import petra` to use the Petra library.
-2) Typecheck your program with `mypy <program name>.py`.
-3) If your program is a test, add it to the tests/ directory and write test
-   cases in a format similar to other tests in the directory.
-4) Run all tests with `./run_tests`.
+
+ 1. Write a Petra program. `import petra` to use the Petra library.
+ 2. Typecheck your program with `mypy <program name>.py`.
+ 3. If your program is a test, add it to the tests/ directory and write test
+    cases in a format similar to other tests in the directory.
+ 4. Run all tests with `./run_tests.sh`.
 
 ## Troubleshooting
+
 Sometimes you may want to compile the emitted LLVM manually.
-1) Generate llvm bytecode by writing a Python file that uses the Petra library
-and calling petra.Program.to\_llvm().
-2) `llc --mtriple=<target-architecture> <llvm-file>` (for target architecture,
-    on Linux 64-bit try x86\_64-unknown-linux-gnu, and on macOS try
-    x86\_64-apple-darwin18.7.0)
-3) Assemble and link to create an executable.
+
+ 1. Generate llvm bytecode by writing a Python file that uses the Petra library
+    and calling `petra.Program.to_llvm()`.
+ 2. `llc --mtriple=<target-architecture> <llvm-file>` (for target architecture,
+    on Linux 64-bit try `x86_64-unknown-linux-gnu`, and on macOS try
+    `x86_64-apple-darwin18.7.0`)
+ 3. Assemble and link to create an executable.
 
 # Background
 
@@ -122,7 +145,7 @@ or previously added to the program.
 
 Creates a variable declaration, which can be used in assignemnts or when adding
 a function to a program. The name must pass the regex
-r"^\[a-z\]\[a-zA-z0-9_\]\*$". Variables cannot be redeclared within a scope
+`r"^[a-z][a-zA-z0-9_]*$"`. Variables cannot be redeclared within a scope
 (defined by a function or an if/else clause).
 
 `petra.Declare` is not actually a statement but can be used in an Assign
@@ -259,16 +282,17 @@ exceptions can also be caught and verified to be thrown for invalid programs.
 
 Petra is incomplete, and programming features are still missing. Here's a
 partial list:
-- loops
-- strings
-- aggregate types, like arrays or structs
-- memory allocation and pointers
-- floating point operations
-- casting between types
+
+  - loops
+  - strings
+  - aggregate types, like arrays or structs
+  - memory allocation and pointers
+  - floating point operations
+  - casting between types
 
 In addition, parts of Petra infrastructure could be improved:
-- Some error messages could be reworded or tested due to lack of usage.
-- Petra's testing framework, while decently robust, is missing a lot of tests.
+  - Some error messages could be reworded or tested due to lack of usage.
+  - Petra's testing framework, while decently robust, is missing a lot of tests.
   An unfortunate side-effect is that there may be latent bugs in the compiler as
   well.
 
