@@ -1,4 +1,4 @@
-# Petra
+# Petra [![Build Status](https://travis-ci.org/StanfordLegion/petra.svg?branch=master)](https://travis-ci.org/StanfordLegion/petra)
 
 A compiler for Petra programs that emits LLVM.
 
