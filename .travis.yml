@@ -16,3 +16,5 @@ script:
   - mypy petra
   - mypy examples
   - mypy tests
+  - black --check .
+  - black --diff .
