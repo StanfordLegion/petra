@@ -7,31 +7,20 @@ program = pt.Program("module")
 
 # Int8_t functions.
 
-program.add_func("return_m2_i8", (), pt.Int8_t, [
-    pt.Return(pt.Int8(-2)),
-])
+program.add_func("return_m2_i8", (), pt.Int8_t, [pt.Return(pt.Int8(-2)),])
 
-program.add_func("return_0_i8", (), pt.Int8_t, [
-    pt.Return(pt.Int8(0)),
-])
+program.add_func("return_0_i8", (), pt.Int8_t, [pt.Return(pt.Int8(0)),])
 
-program.add_func("return_2_i8", (), pt.Int8_t, [
-    pt.Return(pt.Int8(2)),
-])
+program.add_func("return_2_i8", (), pt.Int8_t, [pt.Return(pt.Int8(2)),])
 
 # Int32_t functions.
 
-program.add_func("return_m2_i32", (), pt.Int32_t, [
-    pt.Return(pt.Int32(-2)),
-])
+program.add_func("return_m2_i32", (), pt.Int32_t, [pt.Return(pt.Int32(-2)),])
 
-program.add_func("return_0_i32", (), pt.Int32_t, [
-    pt.Return(pt.Int32(0)),
-])
+program.add_func("return_0_i32", (), pt.Int32_t, [pt.Return(pt.Int32(0)),])
 
-program.add_func("return_2_i32", (), pt.Int32_t, [
-    pt.Return(pt.Int32(2)),
-])
+program.add_func("return_2_i32", (), pt.Int32_t, [pt.Return(pt.Int32(2)),])
+
 
 class ConstantsTestCase(unittest.TestCase):
     def setUp(self):
@@ -83,8 +72,8 @@ class ConstantsTestCase(unittest.TestCase):
 
     def test_below_bounds_i32(self):
         with self.assertRaises(pt.StaticException):
-            pt.Int8(-2**31-1)
+            pt.Int8(-(2 ** 31) - 1)
 
     def test_above_bounds_i32(self):
         with self.assertRaises(pt.StaticException):
-            pt.Int8(2**31)
+            pt.Int8(2 ** 31)

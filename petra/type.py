@@ -4,14 +4,18 @@ This file defines Petra types.
 
 from typing import Tuple, Union
 
+
 class Type(object):
     """
     The "type" of Petra types.
     """
+
     def __init__(self, name: str):
         self.name = name
+
     def __str__(self):
         return self.name
+
 
 # Type aliases for functions.
 Ftypein = Tuple[Type, ...]
