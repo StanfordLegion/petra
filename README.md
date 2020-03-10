@@ -129,7 +129,7 @@ Returns an unoptimized LLVM representation of the program as a string.
 Returns a MCJIT execution engine with the program loaded. See tests for an
 example of how to use this.
 
-## Petra Statements
+## Statements
 
 ### petra.If(pred: Expr, then_: List[Statement], else_: List[Statement])
 
@@ -160,94 +160,106 @@ declared variable or an existing one.
 
 Creates a return statement that returns either nothing or an expression.
 
-## Petra Expressions
+## Expressions
 
-### petra.Var(name: str)
+### Variables
 
-Creates a variable reference to an argument or previously declared variable.
+  * `petra.Var(name: str)`
 
-### petra.Int8(value: int)
+    Creates a variable reference to an argument or previously declared variable.
 
-Creates an Int8\_t constant.
+### Constants
 
-### petra.Int32(value: int)
+  * `petra.Int8(value: int)`
 
-Creates an Int32\_t constant.
+     Creates an Int8\_t constant.
 
-### petra.Float(value: float)
+  * `petra.Int32(value: int)`
 
-Creates a Float\_t constant.
+    Creates an Int32\_t constant.
 
-### petra.Bool(value: bool)
+  * `petra.Float(value: float)`
 
-Creates a Bool\_t constant.
+    Creates a Float\_t constant.
 
-### petra.Add(left: Expr, right: Expr)
+  * `petra.Bool(value: bool)`
 
-Creates a addition of two arithmetic expressions.
+    Creates a Bool\_t constant.
 
-### petra.Sub(left: Expr, right: Expr)
+### Arithmetic
 
-Creates a subtraction of two arithmetic expressions.
+  * `petra.Add(left: Expr, right: Expr)`
 
-### petra.Mul(left: Expr, right: Expr)
+    Creates a addition of two arithmetic expressions.
 
-Creates a multiplication of two arithmetic expressions.
+  * `petra.Sub(left: Expr, right: Expr)`
 
-### petra.Div(left: Expr, right: Expr)
+    Creates a subtraction of two arithmetic expressions.
 
-Creates a division of two arithmetic expressions.
+  * `petra.Mul(left: Expr, right: Expr)`
 
-### petra.Mod(left: Expr, right: Expr)
+    Creates a multiplication of two arithmetic expressions.
 
-Creates a division remainder of two arithmetic expressions.
+  * `petra.Div(left: Expr, right: Expr)`
 
-### petra.Lt(left: Expr, right: Expr)
+    Creates a division of two arithmetic expressions.
 
-Creates a less-than comparison between two arithmetic expressions.
+  * `petra.Mod(left: Expr, right: Expr)`
 
-### petra.Lte(left: Expr, right: Expr)
+    Creates a division remainder of two arithmetic expressions.
 
-Creates a less-than-or-equal comparison between two arithmetic expressions.
+### Comparison
 
-### petra.Gt(left: Expr, right: Expr)
+  * `petra.Lt(left: Expr, right: Expr)`
 
-Creates a greater-than comparison between two arithmetic expressions.
+    Creates a less-than comparison between two arithmetic expressions.
 
-### petra.Gte(left: Expr, right: Expr)
+  * `petra.Lte(left: Expr, right: Expr)`
 
-Creates a greater-than-or-equal comparison between two arithmetic expressions.
+    Creates a less-than-or-equal comparison between two arithmetic expressions.
 
-### petra.Eq(left: Expr, right: Expr)
+  * `petra.Gt(left: Expr, right: Expr)`
 
-Creates an equality check between two expressions.
+    Creates a greater-than comparison between two arithmetic expressions.
 
-### petra.Neq(left: Expr, right: Expr)
+  * `petra.Gte(left: Expr, right: Expr)`
 
-Creates an unequality check between two expressions.
+    Creates a greater-than-or-equal comparison between two arithmetic expressions.
 
-### petra.And(left: Expr, right: Expr)
+### Equality
 
-Creates a short-circuiting boolean and of two boolean expressions.
+  * `petra.Eq(left: Expr, right: Expr)`
 
-### petra.Or(left: Expr, right: Expr)
+    Creates an equality check between two expressions.
 
-Creates a short-circuiting boolean or of two boolean expressions.
+  * `petra.Neq(left: Expr, right: Expr)`
 
-### petra.Not(e: Expr)
+    Creates an unequality check between two expressions.
 
-Creates a boolean not of a boolean expression.
+### Logical
 
-## Misc
+  * `petra.And(left: Expr, right: Expr)`
 
-### petra.StaticException
+    Creates a short-circuiting boolean and of two boolean expressions.
 
-An exception thrown if Petra code does not confirm to certain static checks such
-as a variable name conforming to a regex.
+  * `petra.Or(left: Expr, right: Expr)`
 
-### petra.TypeException
+    Creates a short-circuiting boolean or of two boolean expressions.
 
-An exception thrown if Petra code fails to typecheck.
+  * `petra.Not(e: Expr)`
+
+    Creates a boolean not of a boolean expression.
+
+## Errors
+
+  * petra.ValidateError
+
+    An exception thrown if Petra code does not confirm to certain
+    static checks such as a variable name conforming to a regex.
+
+  * petra.TypeCheckError
+
+    An exception thrown if Petra code fails to typecheck.
 
 # Design and Implementation
 
