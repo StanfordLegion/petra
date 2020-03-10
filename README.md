@@ -131,34 +131,35 @@ example of how to use this.
 
 ## Statements
 
-### petra.If(pred: Expr, then_: List[Statement], else_: List[Statement])
+  * `petra.If(pred: Expr, then_: List[Statement], else_: List[Statement])`
 
-Creates an if-else statement predicated on the given expression. The then and
-else clause can be empty.
+    Creates an if-else statement predicated on the given
+    expression. The then and else clause can be empty.
 
-### petra.Call(name: str, args: List[Expr])
+  * `petra.Call(name: str, args: List[Expr])`
 
-Creates a function call statement to a function that was either declared extern
-or previously added to the program.
+    Creates a function call statement to a function that was either
+    declared extern or previously added to the program.
 
-### petra.Declare(t: Type, name: str)
+  * `petra.Declare(t: Type, name: str)`
 
-Creates a variable declaration, which can be used in assignemnts or when adding
-a function to a program. The name must pass the regex
-`r"^[a-z][a-zA-z0-9_]*$"`. Variables cannot be redeclared within a scope
-(defined by a function or an if/else clause).
+    Creates a variable declaration, which can be used in assignemnts
+    or when adding a function to a program. The name must pass the
+    regex `r"^[a-z][a-zA-z0-9_]*$"`. Variables cannot be redeclared
+    within a scope (defined by a function or an if/else clause).
 
-`petra.Declare` is not actually a statement but can be used in an Assign
-statement.
+    `petra.Declare` is not actually a statement but can be used in an
+    Assign statement.
 
-### petra.Assign(var: Union[Declare, Var], e: Expr)
+  * `petra.Assign(var: Union[Declare, Var], e: Expr)`
 
-Creates an assignment statement assigning the expression to either to a newly
-declared variable or an existing one.
+    Creates an assignment statement assigning the expression to either
+    to a newly declared variable or an existing one.
 
-### petra.Return(e: Union[Tuple[()], Expr])
+  * `petra.Return(e: Union[Tuple[()], Expr])`
 
-Creates a return statement that returns either nothing or an expression.
+    Creates a return statement that returns either nothing or an
+    expression.
 
 ## Expressions
 
