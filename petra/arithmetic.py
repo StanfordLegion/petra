@@ -7,9 +7,9 @@ from typing import Optional
 
 from .codegen import codegen_expression, CodegenContext
 from .expr import Expr
-from .staticcheck import staticcheck
+from .validate import validate
 from .type import Int8_t, Int32_t, Type
-from .typecheck import typecheck, TypeContext, TypeException
+from .typecheck import typecheck, TypeContext, TypeCheckError
 
 
 class ArithmeticBinop(Expr):
@@ -21,7 +21,7 @@ class ArithmeticBinop(Expr):
         self.left = left
         self.right = right
         self.t: Optional[Type] = None
-        staticcheck(self)
+        validate(self)
 
     def get_type(self) -> Type:
         if isinstance(self.t, Type):
@@ -29,10 +29,10 @@ class ArithmeticBinop(Expr):
         raise Exception("Expected type to exist - was typecheck called?")
 
 
-@staticcheck.register(ArithmeticBinop)
-def _staticcheck_arithmetic_binop(b: ArithmeticBinop) -> None:
-    staticcheck(b.left)
-    staticcheck(b.right)
+@validate.register(ArithmeticBinop)
+def _validate_arithmetic_binop(b: ArithmeticBinop) -> None:
+    validate(b.left)
+    validate(b.right)
 
 
 @typecheck.register(ArithmeticBinop)
@@ -46,7 +46,7 @@ def _typecheck_arithmetic_binop(b: ArithmeticBinop, ctx: TypeContext) -> None:
     elif (t_left, t_right) == (Int32_t, Int32_t):
         b.t = Int32_t
     else:
-        raise TypeException(
+        raise TypeCheckError(
             "Incompatible types for arithmetic binary operation: %s and %s"
             % (str(t_left), str(t_right))
         )

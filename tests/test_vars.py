@@ -75,40 +75,40 @@ class VarsTestCase(unittest.TestCase):
         self.assertEqual(self.return_temp_unused(), 2)
 
     def test_variable_name_starts_not_lowercase(self):
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("_")
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("_a")
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("A")
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("Aa")
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("0")
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("0a")
         pt.Var("a")
         pt.Var("aa")
 
     def test_variable_name_contains_forbidden(self):
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("a*")
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("a-a")
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("a+a")
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("a🤔")
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("a猫")
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Var("a ")
         pt.Var("aBCD")
         pt.Var("a_B_02")
         pt.Var("a554")
 
     def test_declare_undeclared_variable(self):
-        with self.assertRaises(pt.TypeException):
+        with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
                 (),
@@ -120,7 +120,7 @@ class VarsTestCase(unittest.TestCase):
             )
 
     def test_assign_undeclared_variable(self):
-        with self.assertRaises(pt.TypeException):
+        with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
                 (),
@@ -129,13 +129,13 @@ class VarsTestCase(unittest.TestCase):
             )
 
     def test_return_undeclared_variable(self):
-        with self.assertRaises(pt.TypeException):
+        with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo", (), pt.Int32_t, [pt.Return(pt.Var("x")),]
             )
 
     def test_redeclared_variable(self):
-        with self.assertRaises(pt.TypeException):
+        with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
                 (),
@@ -148,7 +148,7 @@ class VarsTestCase(unittest.TestCase):
             )
 
     def test_declare_wrong_type(self):
-        with self.assertRaises(pt.TypeException):
+        with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
                 (),
@@ -158,7 +158,7 @@ class VarsTestCase(unittest.TestCase):
                     pt.Return(pt.Int32(2)),
                 ],
             )
-        with self.assertRaises(pt.TypeException):
+        with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
                 (),

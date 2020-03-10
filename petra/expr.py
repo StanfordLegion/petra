@@ -9,9 +9,9 @@ from llvmlite import ir  # type:ignore
 from typing import Optional
 
 from .codegen import codegen_expression, CodegenContext
-from .staticcheck import staticcheck, StaticException
+from .validate import validate, ValidateError
 from .type import Type
-from .typecheck import typecheck, TypeContext, TypeException
+from .typecheck import typecheck, TypeContext, TypeCheckError
 
 
 class Expr(ABC):
@@ -38,7 +38,7 @@ class Var(Expr):
     def __init__(self, name: str):
         self.name = name
         self.t: Optional[Type] = None
-        staticcheck(self)
+        validate(self)
 
     def get_type(self) -> Type:
         if isinstance(self.t, Type):
@@ -46,10 +46,10 @@ class Var(Expr):
         raise Exception("Expected type to exist - was typecheck called?")
 
 
-@staticcheck.register(Var)
-def _staticcheck_var(v: Var) -> None:
+@validate.register(Var)
+def _validate_var(v: Var) -> None:
     if not re.match(r"^[a-z][a-zA-Z0-9_]*$", v.name):
-        raise StaticException(
+        raise ValidateError(
             "Variable name '%s' does not match regex " "^[a-z][a-zA-Z0-9_]*$" % v.name
         )
 
@@ -57,7 +57,7 @@ def _staticcheck_var(v: Var) -> None:
 @typecheck.register(Var)
 def _typecheck_var(v: Var, ctx: TypeContext) -> None:
     if v.name not in ctx.types:
-        raise TypeException("Unknown variable %s" % v.name)
+        raise TypeCheckError("Unknown variable %s" % v.name)
     v.t = ctx.types[v.name]
 
 

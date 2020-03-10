@@ -9,7 +9,7 @@ from .constant import Bool, Float, Int8, Int32
 from .expr import Var
 from .program import Program
 from .statement import Declare, Assign, Return
-from .staticcheck import StaticException
+from .validate import ValidateError
 from .truth import And, Eq, Gt, Gte, Lt, Lte, Neq, Not, Or
 from .type import Bool_t, Float_t, Int8_t, Int32_t
-from .typecheck import TypeException
+from .typecheck import TypeCheckError

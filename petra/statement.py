@@ -10,9 +10,9 @@ from typing import Tuple, Union
 
 from .codegen import codegen_expression, codegen_statement, convert_type, CodegenContext
 from .expr import Expr, Var
-from .staticcheck import staticcheck, StaticException
+from .validate import validate, ValidateError
 from .type import Type
-from .typecheck import typecheck, TypeContext, TypeException
+from .typecheck import typecheck, TypeContext, TypeCheckError
 
 #
 # Statement
@@ -52,20 +52,20 @@ class Assign(Statement):
     def __init__(self, var: Union[Declare, Var], e: Expr):
         self.var = var
         self.e = e
-        staticcheck(self)
+        validate(self)
 
 
-@staticcheck.register(Assign)
-def _staticcheck_assign(s: Assign) -> None:
+@validate.register(Assign)
+def _validate_assign(s: Assign) -> None:
     if isinstance(s.var, Declare):
         if not re.match(r"^[a-z][a-zA-Z0-9_]*$", s.var.name):
-            raise StaticException(
+            raise ValidateError(
                 "Variable name '%s' does not match regex "
                 "^[a-z][a-zA-Z0-9_]*$" % s.var.name
             )
     else:
-        staticcheck(s.var)
-    staticcheck(s.e)
+        validate(s.var)
+    validate(s.e)
 
 
 @typecheck.register(Assign)
@@ -73,13 +73,13 @@ def _typecheck_assign(s: Assign, ctx: TypeContext) -> None:
     typecheck(s.e, ctx)
     if isinstance(s.var, Declare):
         if s.var.name in ctx.types:
-            raise TypeException("Cannot redeclare variable %s" % s.var.name)
+            raise TypeCheckError("Cannot redeclare variable %s" % s.var.name)
         ctx.types[s.var.name] = s.var.t
     else:
         typecheck(s.var, ctx)
     expected_type = s.e.get_type()
     if ctx.types[s.var.name] != expected_type:
-        raise TypeException(
+        raise TypeCheckError(
             "Cannot assign expression of type %s to variable of"
             "type %s" % (expected_type, ctx.types[s.var.name])
         )
@@ -107,32 +107,32 @@ class Return(Statement):
 
     def __init__(self, e: Union[Tuple[()], Expr]):
         self.e = e
-        staticcheck(self)
+        validate(self)
 
 
-@staticcheck.register(Return)
-def _staticcheck_return(s: Return) -> None:
+@validate.register(Return)
+def _validate_return(s: Return) -> None:
     if isinstance(s.e, Expr):
-        staticcheck(s.e)
+        validate(s.e)
 
 
 @typecheck.register(Return)
 def _typecheck_return(s: Return, ctx: TypeContext) -> None:
     if isinstance(s.e, Expr):
         if ctx.return_type == ():
-            raise TypeException(
+            raise TypeCheckError(
                 "Void functions' return statements must return literal ()."
             )
         else:
             typecheck(s.e, ctx)
             if s.e.get_type() != ctx.return_type:
-                raise TypeException(
+                raise TypeCheckError(
                     "Return type %s does not match function declaration."
                     % str(s.e.get_type())
                 )
     else:
         if ctx.return_type != ():
-            raise TypeException("Non-void functions cannot return ().")
+            raise TypeCheckError("Non-void functions cannot return ().")
 
 
 @codegen_statement.register(Return)

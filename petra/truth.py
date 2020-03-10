@@ -7,9 +7,9 @@ from typing import Optional
 
 from .codegen import codegen_expression, convert_type, CodegenContext
 from .expr import Expr
-from .staticcheck import staticcheck
+from .validate import validate
 from .type import Bool_t, Int8_t, Int32_t, Type
-from .typecheck import typecheck, TypeContext, TypeException
+from .typecheck import typecheck, TypeContext, TypeCheckError
 
 #
 # Comparison
@@ -25,7 +25,7 @@ class Comparison(Expr):
         self.left = left
         self.right = right
         self.t: Optional[Type] = None
-        staticcheck(self)
+        validate(self)
 
     def get_type(self) -> Type:
         if isinstance(self.t, Type):
@@ -33,10 +33,10 @@ class Comparison(Expr):
         raise Exception("Expected type to exist - was typecheck called?")
 
 
-@staticcheck.register(Comparison)
-def _staticcheck_comparison(c: Comparison) -> None:
-    staticcheck(c.left)
-    staticcheck(c.right)
+@validate.register(Comparison)
+def _validate_comparison(c: Comparison) -> None:
+    validate(c.left)
+    validate(c.right)
 
 
 @typecheck.register(Comparison)
@@ -48,7 +48,7 @@ def _typecheck_comparison(c: Comparison, ctx: TypeContext) -> None:
     if (t_left, t_right) in ((Int8_t, Int8_t), (Int32_t, Int32_t)):
         c.t = Bool_t
     else:
-        raise TypeException(
+        raise TypeCheckError(
             "Incompatible types for arithmetic comparison: %s and %s"
             % (str(t_left), str(t_right))
         )
@@ -144,7 +144,7 @@ def _typecheck_equality_comparison(c: EqualityComparison, ctx: TypeContext) -> N
     if (t_left, t_right) in ((Bool_t, Bool_t), (Int8_t, Int8_t), (Int32_t, Int32_t)):
         c.t = Bool_t
     else:
-        raise TypeException(
+        raise TypeCheckError(
             "Incompatible types for equality comparison: %s and %s"
             % (str(t_left), str(t_right))
         )
@@ -198,7 +198,7 @@ class BooleanBinop(Expr):
         self.left = left
         self.right = right
         self.t: Optional[Type] = None
-        staticcheck(self)
+        validate(self)
 
     def get_type(self) -> Type:
         if isinstance(self.t, Type):
@@ -206,10 +206,10 @@ class BooleanBinop(Expr):
         raise Exception("Expected type to exist - was typecheck called?")
 
 
-@staticcheck.register(BooleanBinop)
-def _staticcheck_boolean_binop(b: BooleanBinop) -> None:
-    staticcheck(b.left)
-    staticcheck(b.right)
+@validate.register(BooleanBinop)
+def _validate_boolean_binop(b: BooleanBinop) -> None:
+    validate(b.left)
+    validate(b.right)
 
 
 @typecheck.register(BooleanBinop)
@@ -221,7 +221,7 @@ def _typecheck_boolean_binop(b: BooleanBinop, ctx: TypeContext) -> None:
     if (t_left, t_right) == (Bool_t, Bool_t):
         b.t = Bool_t
     else:
-        raise TypeException(
+        raise TypeCheckError(
             "Incompatible types for boolean binary operation: %s and %s"
             % (str(t_left), str(t_right))
         )
@@ -283,7 +283,7 @@ class Not(Expr):
     def __init__(self, e: Expr):
         self.e = e
         self.t: Optional[Type] = None
-        staticcheck(self)
+        validate(self)
 
     def get_type(self) -> Type:
         if isinstance(self.t, Type):
@@ -291,9 +291,9 @@ class Not(Expr):
         raise Exception("Expected type to exist - was typecheck called?")
 
 
-@staticcheck.register(Not)
-def _staticcheck_not(b: Not) -> None:
-    staticcheck(b.e)
+@validate.register(Not)
+def _validate_not(b: Not) -> None:
+    validate(b.e)
 
 
 @typecheck.register(Not)
@@ -303,7 +303,7 @@ def _typecheck_not(b: Not, ctx: TypeContext) -> None:
     if t == Bool_t:
         b.t = Bool_t
     else:
-        raise TypeException("Incompatible type for boolean not:: %s" % (str(t)))
+        raise TypeCheckError("Incompatible type for boolean not:: %s" % (str(t)))
 
 
 @codegen_expression.register(Not)

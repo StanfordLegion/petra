@@ -66,7 +66,7 @@ class FunctionsTestCase(unittest.TestCase):
                 self.assertEqual(self.psum(i, j), i + j)
 
     def test_return_call_nothing_for_int32_t(self):
-        with self.assertRaises(pt.TypeException):
+        with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func("nothing", (), (), [pt.Return(()),]).add_func(
                 "call_nothing", (), pt.Int32_t, [pt.Return(pt.Call("nothing", [])),]
             )

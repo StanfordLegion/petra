@@ -63,17 +63,17 @@ class ConstantsTestCase(unittest.TestCase):
         self.assertEqual(self.return_2_i32(), 2)
 
     def test_below_bounds_i8(self):
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Int8(-129)
 
     def test_above_bounds_i8(self):
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Int8(128)
 
     def test_below_bounds_i32(self):
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Int8(-(2 ** 31) - 1)
 
     def test_above_bounds_i32(self):
-        with self.assertRaises(pt.StaticException):
+        with self.assertRaises(pt.ValidateError):
             pt.Int8(2 ** 31)

@@ -10,9 +10,9 @@ from typing import List, Optional, Tuple, Union
 from .codegen import codegen_expression, codegen_statement, CodegenContext
 from .expr import Expr
 from .statement import Statement
-from .staticcheck import staticcheck, StaticException
+from .validate import validate, ValidateError
 from .type import Type
-from .typecheck import typecheck, TypeContext, TypeException
+from .typecheck import typecheck, TypeContext, TypeCheckError
 
 
 class Call(Expr, Statement):
@@ -24,20 +24,20 @@ class Call(Expr, Statement):
         self.name = name
         self.args = args
         self.t: Union[Tuple[()], Optional[Type]] = None
-        staticcheck(self)
+        validate(self)
 
     def get_type(self) -> Type:
         if isinstance(self.t, Type):
             return self.t
         if self.t == ():
-            raise TypeException("Attempted to use Call statement as expression")
+            raise TypeCheckError("Attempted to use Call statement as expression")
         raise Exception("Expected type to exist - was typecheck called?")
 
 
-@staticcheck.register(Call)
-def _staticcheck_call(c: Call) -> None:
+@validate.register(Call)
+def _validate_call(c: Call) -> None:
     if not re.match(r"^[a-z][a-zA-Z0-9_]*$", c.name):
-        raise StaticException(
+        raise ValidateError(
             "Function call to '%s' does not match regex "
             "^[a-z][a-zA-Z0-9_]*$" % c.name
         )
@@ -47,18 +47,18 @@ def _staticcheck_call(c: Call) -> None:
 def _typecheck_call(c: Call, ctx: TypeContext) -> None:
     # check existence of name
     if c.name not in ctx.functypes:
-        raise TypeException("Undeclared function '%s'" % c.name)
+        raise TypeCheckError("Undeclared function '%s'" % c.name)
     (t_in, t_out) = ctx.functypes[c.name]
     # check argument types
     if len(c.args) != len(t_in):
-        raise TypeException(
+        raise TypeCheckError(
             "Function call to '%s' expects %s arguments, not %s"
             % (c.name, len(t_in), len(c.args))
         )
     for i, arg in enumerate(c.args):
         typecheck(arg, ctx)
         if arg.get_type() != t_in[i]:
-            raise TypeException(
+            raise TypeCheckError(
                 "Argument %s of call to '%s' should be of type"
                 "%s, not %s" % (i, c.name, str(t_in[i]), str(arg.get_type()))
             )

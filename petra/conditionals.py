@@ -8,9 +8,9 @@ from typing import List
 from .codegen import codegen_expression, codegen_statement, CodegenContext
 from .expr import Expr
 from .statement import Statement
-from .staticcheck import staticcheck
+from .validate import validate
 from .type import Bool_t
-from .typecheck import typecheck, TypeContext, TypeException
+from .typecheck import typecheck, TypeContext, TypeCheckError
 
 
 class If(Statement):
@@ -22,16 +22,16 @@ class If(Statement):
         self.pred = pred
         self.then_ = then_
         self.else_ = else_
-        staticcheck(self)
+        validate(self)
 
 
-@staticcheck.register(If)
-def _staticcheck_if(s: If) -> None:
-    staticcheck(s.pred)
+@validate.register(If)
+def _validate_if(s: If) -> None:
+    validate(s.pred)
     for statement in s.then_:
-        staticcheck(statement)
+        validate(statement)
     for statement in s.else_:
-        staticcheck(statement)
+        validate(statement)
 
 
 @typecheck.register(If)
@@ -39,7 +39,7 @@ def _typecheck_if(s: If, ctx: TypeContext) -> None:
     typecheck(s.pred, ctx)
     t_pred = s.pred.get_type()
     if t_pred != Bool_t:
-        raise TypeException("If predicate cannot have type %s" % str(t_pred))
+        raise TypeCheckError("If predicate cannot have type %s" % str(t_pred))
     # Typecheck then_ and else_ with a duplicated context
     then_ctx = ctx.copy()
     for statement in s.then_:

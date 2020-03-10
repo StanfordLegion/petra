@@ -34,5 +34,5 @@ def typecheck(syntax, ctx: TypeContext) -> None:
     raise NotImplementedError("Unsupported type: " + str(type(syntax)))
 
 
-class TypeException(Exception):
+class TypeCheckError(Exception):
     pass

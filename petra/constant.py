@@ -6,7 +6,7 @@ from llvmlite import ir  # type:ignore
 
 from .codegen import codegen_expression, convert_type, CodegenContext
 from .expr import Expr
-from .staticcheck import staticcheck, StaticException
+from .validate import validate, ValidateError
 from .type import Bool_t, Float_t, Int8_t, Int32_t, Type
 from .typecheck import typecheck, TypeContext
 
@@ -23,14 +23,14 @@ class Bool(Expr):
     def __init__(self, value: bool):
         self.value = value
         self.t = Bool_t
-        staticcheck(self)
+        validate(self)
 
     def get_type(self) -> Type:
         return self.t
 
 
-@staticcheck.register(Bool)
-def _staticcheck_bool(b: Bool) -> None:
+@validate.register(Bool)
+def _validate_bool(b: Bool) -> None:
     # If it satisfies the type hints, it must be statically sound.
     pass
 
@@ -61,14 +61,14 @@ class Float(Expr):
     def __init__(self, value: float):
         self.value = value
         self.t = Float_t
-        staticcheck(self)
+        validate(self)
 
     def get_type(self) -> Type:
         return self.t
 
 
-@staticcheck.register(Float)
-def _staticcheck_float(f: Float) -> None:
+@validate.register(Float)
+def _validate_float(f: Float) -> None:
     # Technically, ir.Constant allows any Python float.
     # TODO: check what the practical bounds are
     pass
@@ -100,16 +100,16 @@ class Int8(Expr):
     def __init__(self, value: int):
         self.value = value
         self.t = Int8_t
-        staticcheck(self)
+        validate(self)
 
     def get_type(self) -> Type:
         return self.t
 
 
-@staticcheck.register(Int8)
-def _staticcheck_int8(i: Int8) -> None:
+@validate.register(Int8)
+def _validate_int8(i: Int8) -> None:
     if not (-128 <= i.value < 128):
-        raise StaticException("Int8 value not in the range [-128, 128).")
+        raise ValidateError("Int8 value not in the range [-128, 128).")
 
 
 @typecheck.register(Int8)
@@ -138,16 +138,16 @@ class Int32(Expr):
     def __init__(self, value: int):
         self.value = value
         self.t = Int32_t
-        staticcheck(self)
+        validate(self)
 
     def get_type(self) -> Type:
         return self.t
 
 
-@staticcheck.register(Int32)
-def _staticcheck_int32(i: Int32) -> None:
+@validate.register(Int32)
+def _validate_int32(i: Int32) -> None:
     if not (-(2 ** 31) <= i.value < (2 ** 31)):
-        raise StaticException("Int32 value not in the range [-2**31, 2**31).")
+        raise ValidateError("Int32 value not in the range [-2**31, 2**31).")
 
 
 @typecheck.register(Int32)
