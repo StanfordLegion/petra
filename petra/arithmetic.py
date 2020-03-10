@@ -5,11 +5,10 @@ This file defines Petra arithmetic.
 from llvmlite import ir  # type:ignore
 from typing import Optional
 
-from .codegen import codegen_expression, CodegenContext
+from .codegen import CodegenContext
 from .expr import Expr
-from .validate import validate
 from .type import Int8_t, Int32_t, Type
-from .typecheck import typecheck, TypeContext, TypeCheckError
+from .typecheck import TypeContext, TypeCheckError
 
 
 class ArithmeticBinop(Expr):
@@ -17,121 +16,83 @@ class ArithmeticBinop(Expr):
     A Petra binary operation of two arithmetic expressions.
     """
 
-    def __init__(self, left: Expr, right: Expr):
+    def __init__(self, left: Expr, right: Expr, op: str):
         self.left = left
         self.right = right
+        self.op = op
         self.t: Optional[Type] = None
-        validate(self)
+        self.validate()
 
     def get_type(self) -> Type:
         if isinstance(self.t, Type):
             return self.t
         raise Exception("Expected type to exist - was typecheck called?")
 
+    def validate(self) -> None:
+        self.left.validate()
+        self.right.validate()
 
-@validate.register(ArithmeticBinop)
-def _validate_arithmetic_binop(b: ArithmeticBinop) -> None:
-    validate(b.left)
-    validate(b.right)
+    def typecheck(self, ctx: TypeContext) -> None:
+        self.left.typecheck(ctx)
+        t_left = self.left.get_type()
+        self.right.typecheck(ctx)
+        t_right = self.right.get_type()
+        if (t_left, t_right) == (Int8_t, Int8_t):
+            self.t = Int8_t
+        elif (t_left, t_right) == (Int32_t, Int32_t):
+            self.t = Int32_t
+        else:
+            raise TypeCheckError(
+                "Incompatible types for arithmetic binary operation: %s and %s"
+                % (str(t_left), str(t_right))
+            )
 
-
-@typecheck.register(ArithmeticBinop)
-def _typecheck_arithmetic_binop(b: ArithmeticBinop, ctx: TypeContext) -> None:
-    typecheck(b.left, ctx)
-    t_left = b.left.get_type()
-    typecheck(b.right, ctx)
-    t_right = b.right.get_type()
-    if (t_left, t_right) == (Int8_t, Int8_t):
-        b.t = Int8_t
-    elif (t_left, t_right) == (Int32_t, Int32_t):
-        b.t = Int32_t
-    else:
-        raise TypeCheckError(
-            "Incompatible types for arithmetic binary operation: %s and %s"
-            % (str(t_left), str(t_right))
-        )
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
+        left = self.left.codegen(builder, ctx)
+        right = self.right.codegen(builder, ctx)
+        return getattr(builder, self.op)(left, right)
 
 
 class Add(ArithmeticBinop):
     """
-    A Petra addition.
+    Addition operator.
     """
 
-    pass
-
-
-@codegen_expression.register(Add)
-def _codegen_expression_add(
-    a: Add, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(a.left, builder, ctx)
-    right = codegen_expression(a.right, builder, ctx)
-    return builder.add(left, right)
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, "add")
 
 
 class Sub(ArithmeticBinop):
     """
-    A Petra subtraction.
+    Subtraction operator.
     """
 
-    pass
-
-
-@codegen_expression.register(Sub)
-def _codegen_expression_sub(
-    a: Sub, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(a.left, builder, ctx)
-    right = codegen_expression(a.right, builder, ctx)
-    return builder.sub(left, right)
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, "sub")
 
 
 class Mul(ArithmeticBinop):
     """
-    A Petra multiplication.
+    Multiplication operator.
     """
 
-    pass
-
-
-@codegen_expression.register(Mul)
-def _codegen_expression_mul(
-    a: Mul, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(a.left, builder, ctx)
-    right = codegen_expression(a.right, builder, ctx)
-    return builder.mul(left, right)
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, "mul")
 
 
 class Div(ArithmeticBinop):
     """
-    A Petra division.
+    Division operator.
     """
 
-    pass
-
-
-@codegen_expression.register(Div)
-def _codegen_expression_div(
-    a: Div, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(a.left, builder, ctx)
-    right = codegen_expression(a.right, builder, ctx)
-    return builder.sdiv(left, right)
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, "sdiv")
 
 
 class Mod(ArithmeticBinop):
     """
-    A Petra mod operation.
+    Modulus operator.
     """
 
-    pass
-
-
-@codegen_expression.register(Mod)
-def _codegen_expression_mod(
-    a: Mod, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(a.left, builder, ctx)
-    right = codegen_expression(a.right, builder, ctx)
-    return builder.srem(left, right)
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, "srem")

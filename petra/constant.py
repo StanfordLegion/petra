@@ -4,11 +4,11 @@ This file defines Petra constants.
 
 from llvmlite import ir  # type:ignore
 
-from .codegen import codegen_expression, convert_type, CodegenContext
+from .codegen import convert_type, CodegenContext
 from .expr import Expr
-from .validate import validate, ValidateError
+from .validate import ValidateError
 from .type import Bool_t, Float_t, Int8_t, Int32_t, Type
-from .typecheck import typecheck, TypeContext
+from .typecheck import TypeContext
 
 #
 # Bool
@@ -17,35 +17,27 @@ from .typecheck import typecheck, TypeContext
 
 class Bool(Expr):
     """
-    A Petra boolean constant.
+    Boolean constant.
     """
 
     def __init__(self, value: bool):
         self.value = value
         self.t = Bool_t
-        validate(self)
+        self.validate()
 
     def get_type(self) -> Type:
         return self.t
 
+    def validate(self) -> None:
+        # If it satisfies the type hints, it must be statically sound.
+        pass
 
-@validate.register(Bool)
-def _validate_bool(b: Bool) -> None:
-    # If it satisfies the type hints, it must be statically sound.
-    pass
+    def typecheck(self, ctx: TypeContext) -> None:
+        # By construction, this must typecheck.
+        pass
 
-
-@typecheck.register(Bool)
-def _typecheck_bool(b: Bool, ctx: TypeContext) -> None:
-    # By construction, this must typecheck.
-    pass
-
-
-@codegen_expression.register(Bool)
-def _codegen_expression_bool(
-    b: Bool, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    return ir.Constant(convert_type(b.get_type()), b.value)
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
+        return ir.Constant(convert_type(self.get_type()), self.value)
 
 
 #
@@ -55,36 +47,28 @@ def _codegen_expression_bool(
 
 class Float(Expr):
     """
-    A Petra single-precision floating point constant.
+    A single-precision floating point constant.
     """
 
     def __init__(self, value: float):
         self.value = value
         self.t = Float_t
-        validate(self)
+        self.validate()
 
     def get_type(self) -> Type:
         return self.t
 
+    def validate(self) -> None:
+        # Technically, ir.Constant allows any Python float.
+        # TODO: check what the practical bounds are
+        pass
 
-@validate.register(Float)
-def _validate_float(f: Float) -> None:
-    # Technically, ir.Constant allows any Python float.
-    # TODO: check what the practical bounds are
-    pass
+    def typecheck(self, ctx: TypeContext) -> None:
+        # By construction, this must typecheck.
+        pass
 
-
-@typecheck.register(Float)
-def _typecheck_float(f: Float, ctx: TypeContext) -> None:
-    # By construction, this must typecheck.
-    pass
-
-
-@codegen_expression.register(Float)
-def _codegen_expression_float(
-    f: Float, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    return ir.Constant(convert_type(f.get_type()), f.value)
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
+        return ir.Constant(convert_type(self.get_type()), self.value)
 
 
 #
@@ -94,35 +78,27 @@ def _codegen_expression_float(
 
 class Int8(Expr):
     """
-    A Petra 8-bit integer constant.
+    An 8-bit integer constant.
     """
 
     def __init__(self, value: int):
         self.value = value
         self.t = Int8_t
-        validate(self)
+        self.validate()
 
     def get_type(self) -> Type:
         return self.t
 
+    def validate(self) -> None:
+        if not (-128 <= self.value < 128):
+            raise ValidateError("Int8 value not in the range [-128, 128).")
 
-@validate.register(Int8)
-def _validate_int8(i: Int8) -> None:
-    if not (-128 <= i.value < 128):
-        raise ValidateError("Int8 value not in the range [-128, 128).")
+    def typecheck(self, ctx: TypeContext) -> None:
+        # By construction, this must typecheck.
+        pass
 
-
-@typecheck.register(Int8)
-def _typecheck_int8(i: Int8, ctx: TypeContext) -> None:
-    # By construction, this must typecheck.
-    pass
-
-
-@codegen_expression.register(Int8)
-def _codegen_expression_int8(
-    i: Int8, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    return ir.Constant(convert_type(i.get_type()), i.value)
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
+        return ir.Constant(convert_type(self.get_type()), self.value)
 
 
 #
@@ -132,32 +108,24 @@ def _codegen_expression_int8(
 
 class Int32(Expr):
     """
-    A Petra 32-bit integer constant.
+    A 32-bit integer constant.
     """
 
     def __init__(self, value: int):
         self.value = value
         self.t = Int32_t
-        validate(self)
+        self.validate()
 
     def get_type(self) -> Type:
         return self.t
 
+    def validate(self) -> None:
+        if not (-(2 ** 31) <= self.value < (2 ** 31)):
+            raise ValidateError("Int32 value not in the range [-2**31, 2**31).")
 
-@validate.register(Int32)
-def _validate_int32(i: Int32) -> None:
-    if not (-(2 ** 31) <= i.value < (2 ** 31)):
-        raise ValidateError("Int32 value not in the range [-2**31, 2**31).")
+    def typecheck(self, ctx: TypeContext) -> None:
+        # By construction, this must typecheck.
+        pass
 
-
-@typecheck.register(Int32)
-def _typecheck_int32(i: Int32, ctx: TypeContext) -> None:
-    # By construction, this must typecheck.
-    pass
-
-
-@codegen_expression.register(Int32)
-def _codegen_expression_int32(
-    i: Int32, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    return ir.Constant(convert_type(i.get_type()), i.value)
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
+        return ir.Constant(convert_type(self.get_type()), self.value)

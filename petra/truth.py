@@ -5,11 +5,11 @@ This file defines Petra comparisons and boolean logic.
 from llvmlite import ir  # type:ignore
 from typing import Optional
 
-from .codegen import codegen_expression, convert_type, CodegenContext
+from .codegen import convert_type, CodegenContext
 from .expr import Expr
-from .validate import validate
+from .validate import ValidateError
 from .type import Bool_t, Int8_t, Int32_t, Type
-from .typecheck import typecheck, TypeContext, TypeCheckError
+from .typecheck import TypeContext, TypeCheckError
 
 #
 # Comparison
@@ -18,256 +18,202 @@ from .typecheck import typecheck, TypeContext, TypeCheckError
 
 class Comparison(Expr):
     """
-    A Petra comparison between two arithmetic expressions.
+    Comparison operator.
     """
 
-    def __init__(self, left: Expr, right: Expr):
+    def __init__(self, left: Expr, right: Expr, op: str):
         self.left = left
         self.right = right
+        self.op = op
         self.t: Optional[Type] = None
-        validate(self)
+        self.validate()
 
     def get_type(self) -> Type:
         if isinstance(self.t, Type):
             return self.t
         raise Exception("Expected type to exist - was typecheck called?")
 
+    def validate(self) -> None:
+        self.left.validate()
+        self.right.validate()
+        if self.op not in ["<", "<=", ">", ">="]:
+            raise ValidateError("Invalid operator for comparison: %s" % str(self.op))
 
-@validate.register(Comparison)
-def _validate_comparison(c: Comparison) -> None:
-    validate(c.left)
-    validate(c.right)
+    def typecheck(self, ctx: TypeContext) -> None:
+        self.left.typecheck(ctx)
+        t_left = self.left.get_type()
+        self.right.typecheck(ctx)
+        t_right = self.right.get_type()
+        if (t_left, t_right) in ((Int8_t, Int8_t), (Int32_t, Int32_t)):
+            self.t = Bool_t
+        else:
+            raise TypeCheckError(
+                "Incompatible types for arithmetic comparison: %s and %s"
+                % (str(t_left), str(t_right))
+            )
 
-
-@typecheck.register(Comparison)
-def _typecheck_comparison(c: Comparison, ctx: TypeContext) -> None:
-    typecheck(c.left, ctx)
-    t_left = c.left.get_type()
-    typecheck(c.right, ctx)
-    t_right = c.right.get_type()
-    if (t_left, t_right) in ((Int8_t, Int8_t), (Int32_t, Int32_t)):
-        c.t = Bool_t
-    else:
-        raise TypeCheckError(
-            "Incompatible types for arithmetic comparison: %s and %s"
-            % (str(t_left), str(t_right))
-        )
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
+        left = self.left.codegen(builder, ctx)
+        right = self.right.codegen(builder, ctx)
+        return builder.icmp_signed(self.op, left, right)
 
 
 class Lt(Comparison):
     """
-    A Petra less-than comparison.
+    Less-than operator.
     """
 
-    pass
-
-
-@codegen_expression.register(Lt)
-def _codegen_expression_less_than(
-    c: Lt, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(c.left, builder, ctx)
-    right = codegen_expression(c.right, builder, ctx)
-    return builder.icmp_signed("<", left, right)
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, "<")
 
 
 class Lte(Comparison):
     """
-    A Petra less-than-or-equal comparison.
+    Less-than-or-equal operator.
     """
 
-    pass
-
-
-@codegen_expression.register(Lte)
-def _codegen_expression_less_than_or_equal(
-    c: Lte, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(c.left, builder, ctx)
-    right = codegen_expression(c.right, builder, ctx)
-    return builder.icmp_signed("<=", left, right)
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, "<=")
 
 
 class Gt(Comparison):
     """
-    A Petra greater-than comparison.
+    Greater-than operator.
     """
 
-    pass
-
-
-@codegen_expression.register(Gt)
-def _codegen_expression_greater_than(
-    c: Gt, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(c.left, builder, ctx)
-    right = codegen_expression(c.right, builder, ctx)
-    return builder.icmp_signed(">", left, right)
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, ">")
 
 
 class Gte(Comparison):
     """
-    A Petra greater-than-or-equal comparison.
+    Greater-than-or-equal operator.
     """
 
-    pass
-
-
-@codegen_expression.register(Gte)
-def _codegen_expression_greater_than_or_equal(
-    c: Gte, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(c.left, builder, ctx)
-    right = codegen_expression(c.right, builder, ctx)
-    return builder.icmp_signed(">=", left, right)
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, ">=")
 
 
 #
-# EqualityComparison
+# Equality
 #
 
 
-class EqualityComparison(Comparison):
+class Equality(Comparison):
     """
-    A Petra equality comparison between two expressions.
-    """
-
-    pass
-
-
-@typecheck.register(EqualityComparison)
-def _typecheck_equality_comparison(c: EqualityComparison, ctx: TypeContext) -> None:
-    typecheck(c.left, ctx)
-    t_left = c.left.get_type()
-    typecheck(c.right, ctx)
-    t_right = c.right.get_type()
-    if (t_left, t_right) in ((Bool_t, Bool_t), (Int8_t, Int8_t), (Int32_t, Int32_t)):
-        c.t = Bool_t
-    else:
-        raise TypeCheckError(
-            "Incompatible types for equality comparison: %s and %s"
-            % (str(t_left), str(t_right))
-        )
-
-
-class Eq(EqualityComparison):
-    """
-    A Petra equal comparison.
+    Equality operator.
     """
 
-    pass
+    def validate(self) -> None:
+        self.left.validate()
+        self.right.validate()
+        if self.op not in ["==", "!="]:
+            raise ValidateError("Invalid operator for equality: %s" % str(self.op))
+
+    def typecheck(self, ctx: TypeContext) -> None:
+        self.left.typecheck(ctx)
+        t_left = self.left.get_type()
+        self.right.typecheck(ctx)
+        t_right = self.right.get_type()
+        if (t_left, t_right) in (
+            (Bool_t, Bool_t),
+            (Int8_t, Int8_t),
+            (Int32_t, Int32_t),
+        ):
+            self.t = Bool_t
+        else:
+            raise TypeCheckError(
+                "Incompatible types for equality comparison: %s and %s"
+                % (str(t_left), str(t_right))
+            )
 
 
-@codegen_expression.register(Eq)
-def _codegen_expression_equal(
-    c: Eq, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(c.left, builder, ctx)
-    right = codegen_expression(c.right, builder, ctx)
-    return builder.icmp_signed("==", left, right)
-
-
-class Neq(EqualityComparison):
+class Eq(Equality):
     """
-    A Petra unequal comparison.
+    Equals operator.
     """
 
-    pass
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, "==")
 
 
-@codegen_expression.register(Neq)
-def _codegen_expression_not_equal(
-    c: Neq, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(c.left, builder, ctx)
-    right = codegen_expression(c.right, builder, ctx)
-    return builder.icmp_signed("!=", left, right)
+class Neq(Equality):
+    """
+    Not-equals operator.
+    """
+
+    def __init__(self, left: Expr, right: Expr):
+        super().__init__(left, right, "!=")
 
 
 #
-# BooleanBinop
+# Logical
 #
 
 
-class BooleanBinop(Expr):
+class Logical(Expr):
     """
-    A Petra binary operation of two boolean expressions.
+    Logical (short-circuiting) boolean operator.
     """
 
     def __init__(self, left: Expr, right: Expr):
         self.left = left
         self.right = right
         self.t: Optional[Type] = None
-        validate(self)
+        self.validate()
 
     def get_type(self) -> Type:
         if isinstance(self.t, Type):
             return self.t
         raise Exception("Expected type to exist - was typecheck called?")
 
+    def validate(self) -> None:
+        self.left.validate()
+        self.right.validate()
 
-@validate.register(BooleanBinop)
-def _validate_boolean_binop(b: BooleanBinop) -> None:
-    validate(b.left)
-    validate(b.right)
-
-
-@typecheck.register(BooleanBinop)
-def _typecheck_boolean_binop(b: BooleanBinop, ctx: TypeContext) -> None:
-    typecheck(b.left, ctx)
-    t_left = b.left.get_type()
-    typecheck(b.right, ctx)
-    t_right = b.right.get_type()
-    if (t_left, t_right) == (Bool_t, Bool_t):
-        b.t = Bool_t
-    else:
-        raise TypeCheckError(
-            "Incompatible types for boolean binary operation: %s and %s"
-            % (str(t_left), str(t_right))
-        )
+    def typecheck(self, ctx: TypeContext) -> None:
+        self.left.typecheck(ctx)
+        t_left = self.left.get_type()
+        self.right.typecheck(ctx)
+        t_right = self.right.get_type()
+        if (t_left, t_right) == (Bool_t, Bool_t):
+            self.t = Bool_t
+        else:
+            raise TypeCheckError(
+                "Incompatible types for boolean binary operation: %s and %s"
+                % (str(t_left), str(t_right))
+            )
 
 
-class And(BooleanBinop):
+class And(Logical):
     """
-    A Petra boolean and operation.
+    Logical (short-circuiting) and operation.
     """
 
-    pass
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
+        left = self.left.codegen(builder, ctx)
+        temp = builder.alloca(convert_type(Bool_t))
+        builder.store(left, temp)
+        with builder.if_then(left):
+            right = self.right.codegen(builder, ctx)
+            builder.store(right, temp)
+        return builder.load(temp)
 
 
-@codegen_expression.register(And)
-def _codegen_expression_and(
-    b: And, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(b.left, builder, ctx)
-    temp = builder.alloca(convert_type(Bool_t))
-    builder.store(left, temp)
-    with builder.if_then(left):
-        right = codegen_expression(b.right, builder, ctx)
-        builder.store(right, temp)
-    return builder.load(temp)
-
-
-class Or(BooleanBinop):
+class Or(Logical):
     """
-    A Petra boolean or operation.
+    Logical (short-circuiting) or operation.
     """
 
-    pass
-
-
-@codegen_expression.register(Or)
-def _codegen_expression_or(
-    b: Or, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    left = codegen_expression(b.left, builder, ctx)
-    temp = builder.alloca(convert_type(Bool_t))
-    builder.store(left, temp)
-    notleft = builder.sub(ir.Constant(convert_type(Bool_t), True), left)
-    with builder.if_then(notleft):
-        right = codegen_expression(b.right, builder, ctx)
-        builder.store(right, temp)
-    return builder.load(temp)
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
+        left = self.left.codegen(builder, ctx)
+        temp = builder.alloca(convert_type(Bool_t))
+        builder.store(left, temp)
+        notleft = builder.sub(ir.Constant(convert_type(Bool_t), True), left)
+        with builder.if_then(notleft):
+            right = self.right.codegen(builder, ctx)
+            builder.store(right, temp)
+        return builder.load(temp)
 
 
 #
@@ -277,38 +223,30 @@ def _codegen_expression_or(
 
 class Not(Expr):
     """
-    A Petra boolean not operation.
+    Logical not operator.
     """
 
     def __init__(self, e: Expr):
         self.e = e
         self.t: Optional[Type] = None
-        validate(self)
+        self.validate()
 
     def get_type(self) -> Type:
         if isinstance(self.t, Type):
             return self.t
         raise Exception("Expected type to exist - was typecheck called?")
 
+    def validate(self) -> None:
+        self.e.validate()
 
-@validate.register(Not)
-def _validate_not(b: Not) -> None:
-    validate(b.e)
+    def typecheck(self, ctx: TypeContext) -> None:
+        self.e.typecheck(ctx)
+        t = self.e.get_type()
+        if t == Bool_t:
+            self.t = Bool_t
+        else:
+            raise TypeCheckError("Incompatible type for boolean not:: %s" % (str(t)))
 
-
-@typecheck.register(Not)
-def _typecheck_not(b: Not, ctx: TypeContext) -> None:
-    typecheck(b.e, ctx)
-    t = b.e.get_type()
-    if t == Bool_t:
-        b.t = Bool_t
-    else:
-        raise TypeCheckError("Incompatible type for boolean not:: %s" % (str(t)))
-
-
-@codegen_expression.register(Not)
-def _codegen_expression_not(
-    b: Not, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    value = codegen_expression(b.e, builder, ctx)
-    return builder.sub(ir.Constant(convert_type(Bool_t), True), value)
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
+        value = self.e.codegen(builder, ctx)
+        return builder.sub(ir.Constant(convert_type(Bool_t), True), value)

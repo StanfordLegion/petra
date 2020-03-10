@@ -264,15 +264,6 @@ llvmlite is liberally used to simplify construction of basic blocks, and a
 codegen context is passed along to help resolve internal references to variables
 and functions.
 
-Since these each of these three stages has to be defined for each form of Petra
-syntax, we exploit Python's functools.singledispatch for organization. Each
-function corresponding to each stage (e.g. `typecheck`) is defined only once,
-but in each file corresponding to a family of syntax (e.g. `arithmetic.py`) we
-register an overload of the function corresponding to syntax in the file. For
-example, `arithmetic.py` registers a function `_codegen_expression_add` that
-handles code generation for `petra.Add` expressions. This allows us to group
-all operations for a piece of syntax in a single file.
-
 Petra includes a testing framework built upon Python's unittest. By taking
 advantage of the LLVM MCJIT execution engine and Python's ctypes, it's possible
 to run Petra functions from Python which eases testing. Static and type

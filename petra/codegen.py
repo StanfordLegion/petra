@@ -1,8 +1,7 @@
 """
-This file defines the top-level codegen() function and some helpers.
+This file defines the codegen context and helpers.
 """
 
-from functools import singledispatch
 from llvmlite import ir  # type:ignore
 from typing import Dict, Tuple
 
@@ -17,21 +16,6 @@ class CodegenContext(object):
     def __init__(self, funcs: Dict[str, ir.Function]):
         self.vars: Dict[str, ir.Value] = dict()
         self.funcs: Dict[str, ir.Function] = funcs
-
-
-@singledispatch
-def codegen_statement(statement, builder: ir.IRBuilder, ctx: CodegenContext) -> None:
-    raise NotImplementedError("Unsupported type: " + str(type(statement)))
-
-
-@singledispatch
-def codegen_expression(
-    expression, builder: ir.IRBuilder, ctx: CodegenContext
-) -> ir.Value:
-    """
-    Write instructions to builder and return the result.
-    """
-    raise NotImplementedError("Unsupported type: " + str(type(expression)))
 
 
 def convert_func_type(t_in: Ftypein, t_out: Ftypeout):

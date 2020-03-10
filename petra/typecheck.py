@@ -1,8 +1,7 @@
 """
-This file defines the top-level typecheck() function.
+This file defines the type context and errors.
 """
 
-from functools import singledispatch
 from typing import Dict, Tuple
 
 from .type import Ftypein, Ftypeout, Type
@@ -24,14 +23,6 @@ class TypeContext(object):
         ctx_copy = TypeContext(dict(self.functypes), self.return_type)
         ctx_copy.types = dict(self.types)
         return ctx_copy
-
-
-@singledispatch
-def typecheck(syntax, ctx: TypeContext) -> None:
-    """
-    Check types for syntax and write a type for expressions.
-    """
-    raise NotImplementedError("Unsupported type: " + str(type(syntax)))
 
 
 class TypeCheckError(Exception):
