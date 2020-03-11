@@ -90,34 +90,54 @@ class TruthTestCase(unittest.TestCase):
         self.engine = program.compile()
 
         lt = self.engine.get_function_address("lt")
-        self.lt = cast(Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(lt))
+        self.lt = cast(
+            Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(lt)
+        )
 
         lte = self.engine.get_function_address("lte")
-        self.lte = cast(Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(lte))
+        self.lte = cast(
+            Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(lte)
+        )
 
         gt = self.engine.get_function_address("gt")
-        self.gt = cast(Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(gt))
+        self.gt = cast(
+            Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(gt)
+        )
 
         gte = self.engine.get_function_address("gte")
-        self.gte = cast(Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(gte))
+        self.gte = cast(
+            Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(gte)
+        )
 
         eq = self.engine.get_function_address("eq")
-        self.eq = cast(Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(eq))
+        self.eq = cast(
+            Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(eq)
+        )
 
         eqb = self.engine.get_function_address("eqb")
-        self.eqb = cast(Callable[[bool, bool], bool], CFUNCTYPE(c_bool, c_bool, c_bool)(eqb))
+        self.eqb = cast(
+            Callable[[bool, bool], bool], CFUNCTYPE(c_bool, c_bool, c_bool)(eqb)
+        )
 
         neq = self.engine.get_function_address("neq")
-        self.neq = cast(Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(neq))
+        self.neq = cast(
+            Callable[[int, int], bool], CFUNCTYPE(c_bool, c_int8, c_int8)(neq)
+        )
 
         neqb = self.engine.get_function_address("neqb")
-        self.neqb = cast(Callable[[bool, bool], bool], CFUNCTYPE(c_bool, c_bool, c_bool)(neqb))
+        self.neqb = cast(
+            Callable[[bool, bool], bool], CFUNCTYPE(c_bool, c_bool, c_bool)(neqb)
+        )
 
         and_ = self.engine.get_function_address("and_")
-        self.and_ = cast(Callable[[bool, bool], bool], CFUNCTYPE(c_bool, c_bool, c_bool)(and_))
+        self.and_ = cast(
+            Callable[[bool, bool], bool], CFUNCTYPE(c_bool, c_bool, c_bool)(and_)
+        )
 
         or_ = self.engine.get_function_address("or_")
-        self.or_ = cast(Callable[[bool, bool], bool], CFUNCTYPE(c_bool, c_bool, c_bool)(or_))
+        self.or_ = cast(
+            Callable[[bool, bool], bool], CFUNCTYPE(c_bool, c_bool, c_bool)(or_)
+        )
 
         not_ = self.engine.get_function_address("not_")
         self.not_ = cast(Callable[[bool], bool], CFUNCTYPE(c_bool, c_bool)(not_))

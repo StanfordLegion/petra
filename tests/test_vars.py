@@ -64,13 +64,17 @@ class VarsTestCase(unittest.TestCase):
         self.return_temp = cast(Callable[[], int], CFUNCTYPE(c_int32)(return_temp))
 
         return_shuffle_temp = self.engine.get_function_address("return_shuffle_temp")
-        self.return_shuffle_temp = cast(Callable[[], int], CFUNCTYPE(c_int32)(return_shuffle_temp))
+        self.return_shuffle_temp = cast(
+            Callable[[], int], CFUNCTYPE(c_int32)(return_shuffle_temp)
+        )
 
         temp_unused = self.engine.get_function_address("temp_unused")
         self.temp_unused = cast(Callable[[], int], CFUNCTYPE(c_int32)(temp_unused))
 
         return_temp_unused = self.engine.get_function_address("return_temp_unused")
-        self.return_temp_unused = cast(Callable[[], int], CFUNCTYPE(c_int32)(return_temp_unused))
+        self.return_temp_unused = cast(
+            Callable[[], int], CFUNCTYPE(c_int32)(return_temp_unused)
+        )
 
     def test_return_temp(self) -> None:
         self.assertEqual(self.return_temp(), 2)

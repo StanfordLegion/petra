@@ -48,13 +48,17 @@ class FunctionsTestCase(unittest.TestCase):
         call_return_2_discard = self.engine.get_function_address(
             "call_return_2_discard"
         )
-        self.call_return_2_discard = cast(Callable[[], int], CFUNCTYPE(c_int32)(call_return_2_discard))
+        self.call_return_2_discard = cast(
+            Callable[[], int], CFUNCTYPE(c_int32)(call_return_2_discard)
+        )
 
         iden = self.engine.get_function_address("iden")
         self.iden = cast(Callable[[int], int], CFUNCTYPE(c_int32, c_int32)(iden))
 
         psum = self.engine.get_function_address("sum")
-        self.psum = cast(Callable[[int, int], int], CFUNCTYPE(c_int32, c_int32, c_int32)(psum))
+        self.psum = cast(
+            Callable[[int, int], int], CFUNCTYPE(c_int32, c_int32, c_int32)(psum)
+        )
 
     def test_call_return_2(self) -> None:
         self.assertEqual(self.return_2(), 2)
