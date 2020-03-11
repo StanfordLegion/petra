@@ -71,63 +71,55 @@ and `compile()` methods of `Petra.program`.
 Petra takes some inspiration from the C programming language and implements a
 subset of it, so much of the syntax discussed may be familiar.
 
-## Petra Types
+## Types
 
 Petra currently supports 4 types, all of which are primitive.
 
-### petra.Int8_t
+  * `petra.Int8_t`: A 8-bit integer type.
 
-A 8-bit integer type.
+  * `petra.Int32_t`: A 32-bit integer type.
 
-### petra.Int32_t
+  * `petra.Float_t`: A single-precision float type. No operations have
+    been implemented on floats yet - it was introduced for extern
+    compatibility.
 
-A 32-bit integer type.
-
-### petra.Float_t
-
-A single-precision float type. No operations have been implemented on floats yet
-\- it was introduced for extern compatibility.
-
-### petra.Bool_t
-
-A boolean type.
+  * `petra.Bool_t`: A boolean type.
 
 ### Function types
 
 Two metatypes are defined for the inputs and outputs of a function.
 
-#### Ftypein
+  * `petra.Ftypein`: This is equivalent to Tuple[Type, ...], which
+    means a possibly-empty tuple of types.
 
-This is equivalent to Tuple[Type, ...], which means a possibly-empty tuple of
-types.
+  * `petra.Ftypeout`: This is equivalent to Union[Tuple[()], Type],
+    which means either the empty tuple (void, which is otherwise not a
+    valid type) or a single type.
 
-#### Ftypeout
+## Programs
 
-This is equivalent to Union[Tuple[()], Type], which means either the empty tuple
-(void, which is otherwise not a valid type) or a single type.
+  * `petra.Program(name: str)`
 
-## petra.Program(name: str)
+    Creates a program with the given name.
 
-Creates a program with the given name.
+  * `petra.Program.add_func_decl(name: str, t_in: Ftypein, t_out: Ftypeout)`
 
-### petra.Program.add_func_decl(name: str, t_in: Ftypein, t_out: Ftypeout)
+    Declares an extern function (for typechecking reasons) that can be
+    called from Petra code.
 
-Declares an extern function (for typechecking reasons) that can be called from
-Petra code.
+  * `petra.Program.add_func(name: str, args: Tuple[Declare, ...], t_out: Ftypeout, statements: List[Statement])`
 
-### petra.Program.add_func(name: str, args: Tuple[Declare, ...], t_out: Ftypeout, statements: List[Statement])
+    Adds a function with the given name, declaration, and content to
+    the program, then returns the program (for easy chaining).
 
-Adds a function with the given name, declaration, and content to the program,
-then returns the program (for easy chaining).
+  * `petra.Program.to_llvm()`
 
-### petra.Program.to_llvm()
+     Returns an unoptimized LLVM representation of the program as a string.
 
-Returns an unoptimized LLVM representation of the program as a string.
+  * `petra.Program.compile()`
 
-### petra.Program.compile()
-
-Returns a MCJIT execution engine with the program loaded. See tests for an
-example of how to use this.
+    Returns a MCJIT execution engine with the program loaded. See
+    tests for an example of how to use this.
 
 ## Statements
 
