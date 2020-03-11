@@ -4,7 +4,7 @@ This file defines Petra function call expressions and statements.
 
 import re
 
-from llvmlite import ir  # type:ignore
+from llvmlite import ir
 from typing import List, Optional, Tuple, Union
 
 from .codegen import CodegenContext

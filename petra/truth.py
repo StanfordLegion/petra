@@ -2,7 +2,7 @@
 This file defines Petra comparisons and boolean logic.
 """
 
-from llvmlite import ir  # type:ignore
+from llvmlite import ir
 from typing import Optional
 
 from .codegen import convert_type, CodegenContext

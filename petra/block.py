@@ -2,7 +2,7 @@
 This file defines Petra blocks.
 """
 
-from llvmlite import ir  # type:ignore
+from llvmlite import ir
 from typing import List, Union
 
 from .codegen import CodegenContext

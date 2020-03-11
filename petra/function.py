@@ -4,7 +4,7 @@ This file defines Petra functions.
 
 import re
 
-from llvmlite import ir  # type:ignore
+from llvmlite import ir
 from typing import Dict, List, Tuple
 
 from .block import Block

@@ -2,7 +2,7 @@
 This file defines the codegen context and helpers.
 """
 
-from llvmlite import ir  # type:ignore
+from llvmlite import ir
 from typing import Dict, Tuple
 
 from .type import Bool_t, Float_t, Ftypein, Ftypeout, Int8_t, Int32_t, Type

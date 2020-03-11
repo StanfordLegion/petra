@@ -5,7 +5,7 @@ This file defines Petra statements.
 import re
 
 from abc import ABC, abstractmethod
-from llvmlite import ir  # type:ignore
+from llvmlite import ir
 from typing import Tuple, Union
 
 from .codegen import convert_type, CodegenContext

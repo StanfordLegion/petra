@@ -2,7 +2,7 @@
 This file defines Petra constants.
 """
 
-from llvmlite import ir  # type:ignore
+from llvmlite import ir
 
 from .codegen import convert_type, CodegenContext
 from .expr import Expr

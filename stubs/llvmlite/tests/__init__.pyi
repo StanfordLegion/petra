@@ -1,0 +1,9 @@
+from . import customize as customize
+from typing import Any, Optional
+from unittest import TestCase as TestCase
+
+msg: str
+
+def discover_tests(startdir: Any): ...
+def run_tests(suite: Optional[Any] = ..., xmloutput: Optional[Any] = ..., verbosity: int = ...): ...
+def main() -> None: ...

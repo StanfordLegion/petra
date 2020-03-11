@@ -2,7 +2,7 @@
 This file defines Petra conditional control flow.
 """
 
-from llvmlite import ir  # type:ignore
+from llvmlite import ir
 
 from .block import Block
 from .codegen import CodegenContext
