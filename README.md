@@ -121,6 +121,13 @@ Two metatypes are defined for the inputs and outputs of a function.
     Returns a MCJIT execution engine with the program loaded. See
     tests for an example of how to use this.
 
+## Blocks
+
+  * `petra.Block(statements: List[Union[Expr, Statement]])`
+
+     Creates a block of statements. Used in other control flow
+     constructs and in function bodies.
+
 ## Statements
 
   * `petra.If(pred: Expr, then_block: Block, else_block: Block)`
@@ -165,19 +172,19 @@ Two metatypes are defined for the inputs and outputs of a function.
 
   * `petra.Int8(value: int)`
 
-     Creates an Int8\_t constant.
+     Creates an `Int8_t` constant.
 
   * `petra.Int32(value: int)`
 
-    Creates an Int32\_t constant.
+    Creates an `Int32_t` constant.
 
   * `petra.Float(value: float)`
 
-    Creates a Float\_t constant.
+    Creates a `Float_t` constant.
 
   * `petra.Bool(value: bool)`
 
-    Creates a Bool\_t constant.
+    Creates a `Bool_t` constant.
 
 ### Arithmetic
 
