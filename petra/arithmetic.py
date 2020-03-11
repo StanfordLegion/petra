@@ -51,7 +51,7 @@ class ArithmeticBinop(Expr):
         left = self.left.codegen(builder, ctx)
         right = self.right.codegen(builder, ctx)
         # FIXME: figure out a way to be able to type check this
-        return getattr(builder, self.op)(left, right) # type: ignore
+        return getattr(builder, self.op)(left, right)  # type: ignore
 
 
 class Add(ArithmeticBinop):

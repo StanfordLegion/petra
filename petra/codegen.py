@@ -33,7 +33,7 @@ def convert_type(t: Type) -> ir.Type:
         return ir.IntType(1)
     elif t == Float_t:
         # FIXME (Elliott): I don't know why mypy can't see this stub
-        return ir.FloatType() # type: ignore
+        return ir.FloatType()  # type: ignore
     elif t == Int8_t:
         return ir.IntType(8)
     elif t == Int32_t:

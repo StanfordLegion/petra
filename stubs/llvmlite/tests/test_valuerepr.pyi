@@ -1,5 +1,13 @@
 from . import TestCase as TestCase
-from llvmlite.ir import ArrayType as ArrayType, Constant as Constant, DoubleType as DoubleType, FloatType as FloatType, HalfType as HalfType, IntType as IntType, LiteralStructType as LiteralStructType
+from llvmlite.ir import (
+    ArrayType as ArrayType,
+    Constant as Constant,
+    DoubleType as DoubleType,
+    FloatType as FloatType,
+    HalfType as HalfType,
+    IntType as IntType,
+    LiteralStructType as LiteralStructType,
+)
 from typing import Any
 
 int8: Any

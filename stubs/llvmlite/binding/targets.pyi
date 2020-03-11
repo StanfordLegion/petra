@@ -32,7 +32,16 @@ class Target(ffi.ObjectRef):
     def description(self): ...
     @property
     def triple(self): ...
-    def create_target_machine(self, cpu: str = ..., features: str = ..., opt: int = ..., reloc: str = ..., codemodel: str = ..., jitdebug: bool = ..., printmc: bool = ...): ...
+    def create_target_machine(
+        self,
+        cpu: str = ...,
+        features: str = ...,
+        opt: int = ...,
+        reloc: str = ...,
+        codemodel: str = ...,
+        jitdebug: bool = ...,
+        printmc: bool = ...,
+    ): ...
 
 class TargetMachine(ffi.ObjectRef):
     def add_analysis_passes(self, pm: Any) -> None: ...
