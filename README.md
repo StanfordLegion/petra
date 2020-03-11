@@ -107,7 +107,7 @@ Two metatypes are defined for the inputs and outputs of a function.
     Declares an extern function (for typechecking reasons) that can be
     called from Petra code.
 
-  * `petra.Program.add_func(name: str, args: Tuple[Declare, ...], t_out: Ftypeout, statements: List[Statement])`
+  * `petra.Program.add_func(name: str, args: Tuple[Declare, ...], t_out: Ftypeout, block: Block)`
 
     Adds a function with the given name, declaration, and content to
     the program, then returns the program (for easy chaining).
