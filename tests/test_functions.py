@@ -34,7 +34,7 @@ program.add_func(
 
 
 class FunctionsTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.engine = program.compile()
 
         return_2 = self.engine.get_function_address("return_2")
@@ -54,23 +54,23 @@ class FunctionsTestCase(unittest.TestCase):
         psum = self.engine.get_function_address("sum")
         self.psum = CFUNCTYPE(c_int32, c_int32, c_int32)(psum)
 
-    def test_call_return_2(self):
+    def test_call_return_2(self) -> None:
         self.assertEqual(self.return_2(), 2)
         self.assertEqual(self.call_return_2(), 2)
 
-    def test_call_return_2_discard(self):
+    def test_call_return_2_discard(self) -> None:
         self.assertEqual(self.call_return_2_discard(), 3)
 
-    def test_call_iden(self):
+    def test_call_iden(self) -> None:
         for i in range(-3, 3):
             self.assertEqual(self.iden(i), i)
 
-    def test_call_sum(self):
+    def test_call_sum(self) -> None:
         for i in range(-5, 5):
             for j in range(-5, 5):
                 self.assertEqual(self.psum(i, j), i + j)
 
-    def test_return_call_nothing_for_int32_t(self):
+    def test_return_call_nothing_for_int32_t(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "nothing", (), (), pt.Block([pt.Return(())])

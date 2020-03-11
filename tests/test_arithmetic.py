@@ -101,7 +101,7 @@ program.add_func(
 
 
 class ConstantsTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.engine = program.compile()
 
         add_i8 = self.engine.get_function_address("add_i8")
@@ -110,13 +110,13 @@ class ConstantsTestCase(unittest.TestCase):
         add_i32 = self.engine.get_function_address("add_i32")
         self.add_i32 = CFUNCTYPE(c_int32)(add_i32)
 
-    def test_add_i8(self):
+    def test_add_i8(self) -> None:
         self.assertEqual(self.add_i8(), -11)
 
-    def test_add_i32(self):
+    def test_add_i32(self) -> None:
         self.assertEqual(self.add_i32(), -11)
 
-    def test_mismatch_type_add(self):
+    def test_mismatch_type_add(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
@@ -132,7 +132,7 @@ class ConstantsTestCase(unittest.TestCase):
                 pt.Block([pt.Return(pt.Add(pt.Int32(2), pt.Int8(2)))]),
             )
 
-    def test_mismatch_type_sub(self):
+    def test_mismatch_type_sub(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
@@ -148,7 +148,7 @@ class ConstantsTestCase(unittest.TestCase):
                 pt.Block([pt.Return(pt.Sub(pt.Int32(2), pt.Int8(2)))]),
             )
 
-    def test_mismatch_type_mul(self):
+    def test_mismatch_type_mul(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
@@ -164,7 +164,7 @@ class ConstantsTestCase(unittest.TestCase):
                 pt.Block([pt.Return(pt.Mul(pt.Int32(2), pt.Int8(2)))]),
             )
 
-    def test_mismatch_type_div(self):
+    def test_mismatch_type_div(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
@@ -180,7 +180,7 @@ class ConstantsTestCase(unittest.TestCase):
                 pt.Block([pt.Return(pt.Div(pt.Int32(2), pt.Int8(2)))]),
             )
 
-    def test_mismatch_type_mod(self):
+    def test_mismatch_type_mod(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",

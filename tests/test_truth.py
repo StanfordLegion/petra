@@ -84,7 +84,7 @@ program.add_func(
 
 
 class TruthTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.engine = program.compile()
 
         lt = self.engine.get_function_address("lt")
@@ -120,7 +120,7 @@ class TruthTestCase(unittest.TestCase):
         not_ = self.engine.get_function_address("not_")
         self.not_ = CFUNCTYPE(c_bool, c_bool)(not_)
 
-    def test_lt(self):
+    def test_lt(self) -> None:
         self.assertFalse(self.lt(0, 0))
         self.assertTrue(self.lt(0, 3))
         self.assertFalse(self.lt(3, 0))
@@ -135,7 +135,7 @@ class TruthTestCase(unittest.TestCase):
         self.assertTrue(self.lt(-3, -1))
         self.assertFalse(self.lt(-3, -3))
 
-    def test_lte(self):
+    def test_lte(self) -> None:
         self.assertTrue(self.lte(0, 0))
         self.assertTrue(self.lte(0, 3))
         self.assertFalse(self.lte(3, 0))
@@ -150,7 +150,7 @@ class TruthTestCase(unittest.TestCase):
         self.assertTrue(self.lte(-3, -1))
         self.assertTrue(self.lte(-3, -3))
 
-    def test_gt(self):
+    def test_gt(self) -> None:
         self.assertFalse(self.gt(0, 0))
         self.assertFalse(self.gt(0, 3))
         self.assertTrue(self.gt(3, 0))
@@ -165,7 +165,7 @@ class TruthTestCase(unittest.TestCase):
         self.assertFalse(self.gt(-3, -1))
         self.assertFalse(self.gt(-3, -3))
 
-    def test_gte(self):
+    def test_gte(self) -> None:
         self.assertTrue(self.gte(0, 0))
         self.assertFalse(self.gte(0, 3))
         self.assertTrue(self.gte(3, 0))
@@ -180,7 +180,7 @@ class TruthTestCase(unittest.TestCase):
         self.assertFalse(self.gte(-3, -1))
         self.assertTrue(self.gte(-3, -3))
 
-    def test_eq(self):
+    def test_eq(self) -> None:
         self.assertTrue(self.eq(0, 0))
         self.assertFalse(self.eq(0, 3))
         self.assertFalse(self.eq(3, 0))
@@ -195,13 +195,13 @@ class TruthTestCase(unittest.TestCase):
         self.assertFalse(self.eq(-3, -1))
         self.assertTrue(self.eq(-3, -3))
 
-    def test_eqb(self):
+    def test_eqb(self) -> None:
         self.assertTrue(self.eqb(True, True))
         self.assertFalse(self.eqb(True, False))
         self.assertFalse(self.eqb(False, True))
         self.assertTrue(self.eqb(False, False))
 
-    def test_neq(self):
+    def test_neq(self) -> None:
         self.assertFalse(self.neq(0, 0))
         self.assertTrue(self.neq(0, 3))
         self.assertTrue(self.neq(3, 0))
@@ -216,24 +216,24 @@ class TruthTestCase(unittest.TestCase):
         self.assertTrue(self.neq(-3, -1))
         self.assertFalse(self.neq(-3, -3))
 
-    def test_neqb(self):
+    def test_neqb(self) -> None:
         self.assertFalse(self.neqb(True, True))
         self.assertTrue(self.neqb(True, False))
         self.assertTrue(self.neqb(False, True))
         self.assertFalse(self.neqb(False, False))
 
-    def test_and(self):
+    def test_and(self) -> None:
         self.assertTrue(self.and_(True, True))
         self.assertFalse(self.and_(True, False))
         self.assertFalse(self.and_(False, True))
         self.assertFalse(self.and_(False, False))
 
-    def test_or(self):
+    def test_or(self) -> None:
         self.assertTrue(self.or_(True, True))
         self.assertTrue(self.or_(True, False))
         self.assertTrue(self.or_(False, True))
         self.assertFalse(self.or_(False, False))
 
-    def test_not(self):
+    def test_not(self) -> None:
         self.assertTrue(self.not_(False))
         self.assertFalse(self.not_(True))

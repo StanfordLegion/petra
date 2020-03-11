@@ -23,7 +23,7 @@ program.add_func("return_2_i32", (), pt.Int32_t, pt.Block([pt.Return(pt.Int32(2)
 
 
 class ConstantsTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.engine = program.compile()
 
         return_m2_i8 = self.engine.get_function_address("return_m2_i8")
@@ -44,36 +44,36 @@ class ConstantsTestCase(unittest.TestCase):
         return_2_i32 = self.engine.get_function_address("return_2_i32")
         self.return_2_i32 = CFUNCTYPE(c_int32)(return_2_i32)
 
-    def test_return_m2_i8(self):
+    def test_return_m2_i8(self) -> None:
         self.assertEqual(self.return_m2_i8(), -2)
 
-    def test_return_0_i8(self):
+    def test_return_0_i8(self) -> None:
         self.assertEqual(self.return_0_i8(), 0)
 
-    def test_return_2_i8(self):
+    def test_return_2_i8(self) -> None:
         self.assertEqual(self.return_2_i8(), 2)
 
-    def test_return_m2_i32(self):
+    def test_return_m2_i32(self) -> None:
         self.assertEqual(self.return_m2_i32(), -2)
 
-    def test_return_0_i32(self):
+    def test_return_0_i32(self) -> None:
         self.assertEqual(self.return_0_i32(), 0)
 
-    def test_return_2_i32(self):
+    def test_return_2_i32(self) -> None:
         self.assertEqual(self.return_2_i32(), 2)
 
-    def test_below_bounds_i8(self):
+    def test_below_bounds_i8(self) -> None:
         with self.assertRaises(pt.ValidateError):
             pt.Int8(-129)
 
-    def test_above_bounds_i8(self):
+    def test_above_bounds_i8(self) -> None:
         with self.assertRaises(pt.ValidateError):
             pt.Int8(128)
 
-    def test_below_bounds_i32(self):
+    def test_below_bounds_i32(self) -> None:
         with self.assertRaises(pt.ValidateError):
             pt.Int8(-(2 ** 31) - 1)
 
-    def test_above_bounds_i32(self):
+    def test_above_bounds_i32(self) -> None:
         with self.assertRaises(pt.ValidateError):
             pt.Int8(2 ** 31)

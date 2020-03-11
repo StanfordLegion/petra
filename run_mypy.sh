@@ -1,9 +1,24 @@
 #!/bin/bash
 
+set -e
+
 export MYPYPATH=$PWD/stubs
 
-strict_flags="--disallow-any-unimported --disallow-any-expr --disallow-any-decorated --disallow-any-explicit --disallow-any-generics --disallow-subclassing-any"
+flags=(
+    --disallow-any-unimported
+    # --disallow-any-expr
+    --disallow-any-decorated
+    --disallow-any-explicit
+    --disallow-any-generics
+    --disallow-subclassing-any
+    --disallow-untyped-calls
+    --disallow-untyped-defs
+    --disallow-incomplete-defs
+    --disallow-untyped-decorators
+)
 
-mypy petra --disallow-any-unimported --disallow-any-decorated --disallow-any-explicit --disallow-any-generics --disallow-subclassing-any # --disallow-any-expr
-mypy examples $strict_flags
-mypy tests $strict_flags
+set -x
+
+mypy petra "${flags[@]}"
+mypy examples "${flags[@]}"
+mypy tests "${flags[@]}"

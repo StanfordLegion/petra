@@ -19,7 +19,7 @@ class TypeContext(object):
         self.functypes = functypes
         self.return_type = return_type
 
-    def copy(self):
+    def copy(self) -> TypeContext:
         ctx_copy = TypeContext(dict(self.functypes), self.return_type)
         ctx_copy.types = dict(self.types)
         return ctx_copy

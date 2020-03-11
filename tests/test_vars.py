@@ -55,7 +55,7 @@ program.add_func(
 
 
 class VarsTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.engine = program.compile()
 
         return_temp = self.engine.get_function_address("return_temp")
@@ -70,19 +70,19 @@ class VarsTestCase(unittest.TestCase):
         return_temp_unused = self.engine.get_function_address("return_temp_unused")
         self.return_temp_unused = CFUNCTYPE(c_int32)(return_temp_unused)
 
-    def test_return_temp(self):
+    def test_return_temp(self) -> None:
         self.assertEqual(self.return_temp(), 2)
 
-    def test_return_shuffle_temp(self):
+    def test_return_shuffle_temp(self) -> None:
         self.assertEqual(self.return_shuffle_temp(), 2)
 
-    def test_temp_unused(self):
+    def test_temp_unused(self) -> None:
         self.assertEqual(self.temp_unused(), 2)
 
-    def test_return_temp_unused(self):
+    def test_return_temp_unused(self) -> None:
         self.assertEqual(self.return_temp_unused(), 2)
 
-    def test_variable_name_starts_not_lowercase(self):
+    def test_variable_name_starts_not_lowercase(self) -> None:
         with self.assertRaises(pt.ValidateError):
             pt.Var("_")
         with self.assertRaises(pt.ValidateError):
@@ -98,7 +98,7 @@ class VarsTestCase(unittest.TestCase):
         pt.Var("a")
         pt.Var("aa")
 
-    def test_variable_name_contains_forbidden(self):
+    def test_variable_name_contains_forbidden(self) -> None:
         with self.assertRaises(pt.ValidateError):
             pt.Var("a*")
         with self.assertRaises(pt.ValidateError):
@@ -115,7 +115,7 @@ class VarsTestCase(unittest.TestCase):
         pt.Var("a_B_02")
         pt.Var("a554")
 
-    def test_declare_undeclared_variable(self):
+    def test_declare_undeclared_variable(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
@@ -129,7 +129,7 @@ class VarsTestCase(unittest.TestCase):
                 ),
             )
 
-    def test_assign_undeclared_variable(self):
+    def test_assign_undeclared_variable(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
@@ -140,13 +140,13 @@ class VarsTestCase(unittest.TestCase):
                 ),
             )
 
-    def test_return_undeclared_variable(self):
+    def test_return_undeclared_variable(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo", (), pt.Int32_t, pt.Block([pt.Return(pt.Var("x"))])
             )
 
-    def test_redeclared_variable(self):
+    def test_redeclared_variable(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
@@ -161,7 +161,7 @@ class VarsTestCase(unittest.TestCase):
                 ),
             )
 
-    def test_declare_wrong_type(self):
+    def test_declare_wrong_type(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",

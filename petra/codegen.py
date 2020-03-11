@@ -18,7 +18,7 @@ class CodegenContext(object):
         self.funcs: Dict[str, ir.Function] = funcs
 
 
-def convert_func_type(t_in: Ftypein, t_out: Ftypeout):
+def convert_func_type(t_in: Ftypein, t_out: Ftypeout) -> ir.FunctionType:
     llvm_t_in: Tuple[ir.Type, ...] = ()
     if len(t_in) > 0:
         llvm_t_in = tuple(map(convert_type, t_in))
@@ -32,7 +32,8 @@ def convert_type(t: Type) -> ir.Type:
     if t == Bool_t:
         return ir.IntType(1)
     elif t == Float_t:
-        return ir.FloatType()
+        # FIXME (Elliott): I don't know why mypy can't see this stub
+        return ir.FloatType() # type: ignore
     elif t == Int8_t:
         return ir.IntType(8)
     elif t == Int32_t:

@@ -50,7 +50,7 @@ class Program(object):
     def to_llvm(self) -> str:
         return str(self.module)
 
-    def compile(self):
+    def compile(self) -> binding.ExecutionEngine:
         if not self.llvm_initialized:
             self.llvm_initialized = True
             binding.initialize()
