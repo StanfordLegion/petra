@@ -279,11 +279,15 @@ exceptions can also be caught and verified to be thrown for invalid programs.
 Petra is incomplete, and programming features are still missing. Here's a
 partial list:
 
-  - loops
-  - strings
-  - aggregate types, like arrays or structs
-  - memory allocation and pointers
-  - floating point operations
+  - types:
+      - more basic types (signed and unsigned int8/16/32/64, float32/64)
+      - aggregate types (arrays and structs)
+      - strings
+  - control flow:
+      - loops
+      - elseif
+  - pointers, reference/dereference, l-values
+  - floating point arithmetic
   - casting between types
 
 In addition, parts of Petra infrastructure could be improved:

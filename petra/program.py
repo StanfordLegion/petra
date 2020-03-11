@@ -6,6 +6,7 @@ from __future__ import annotations  # necessary to avoid forward declarations
 from llvmlite import ir, binding  # type:ignore
 from typing import Dict, List, Tuple
 
+from .block import Block
 from .codegen import convert_func_type
 from .function import Ftypein, Ftypeout, Function
 from .statement import Declare, Statement
@@ -33,11 +34,7 @@ class Program(object):
         return self
 
     def add_func(
-        self,
-        name: str,
-        args: Tuple[Declare, ...],
-        t_out: Ftypeout,
-        statements: List[Statement],
+        self, name: str, args: Tuple[Declare, ...], t_out: Ftypeout, block: Block,
     ) -> Program:
         if name in self.functypes:
             raise Exception("Function %s already exists in program." % name)
@@ -46,7 +43,7 @@ class Program(object):
         self.funcs[name] = ir.Function(
             self.module, convert_func_type(t_in, t_out), name
         )
-        func = Function(name, args, t_out, statements, self.functypes)
+        func = Function(name, args, t_out, block, self.functypes)
         func.codegen(self.module, self.funcs)
         return self
 

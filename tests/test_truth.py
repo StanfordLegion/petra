@@ -9,74 +9,77 @@ program.add_func(
     "lt",
     (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
     pt.Bool_t,
-    [pt.Return(pt.Lt(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.Lt(pt.Var("x"), pt.Var("y")))]),
 )
 
 program.add_func(
     "lte",
     (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
     pt.Bool_t,
-    [pt.Return(pt.Lte(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.Lte(pt.Var("x"), pt.Var("y")))]),
 )
 
 program.add_func(
     "gt",
     (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
     pt.Bool_t,
-    [pt.Return(pt.Gt(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.Gt(pt.Var("x"), pt.Var("y")))]),
 )
 
 program.add_func(
     "gte",
     (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
     pt.Bool_t,
-    [pt.Return(pt.Gte(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.Gte(pt.Var("x"), pt.Var("y")))]),
 )
 
 program.add_func(
     "eq",
     (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
     pt.Bool_t,
-    [pt.Return(pt.Eq(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.Eq(pt.Var("x"), pt.Var("y")))]),
 )
 
 program.add_func(
     "eqb",
     (pt.Declare(pt.Bool_t, "x"), pt.Declare(pt.Bool_t, "y")),
     pt.Bool_t,
-    [pt.Return(pt.Eq(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.Eq(pt.Var("x"), pt.Var("y")))]),
 )
 
 program.add_func(
     "neq",
     (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
     pt.Bool_t,
-    [pt.Return(pt.Neq(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.Neq(pt.Var("x"), pt.Var("y")))]),
 )
 
 program.add_func(
     "neqb",
     (pt.Declare(pt.Bool_t, "x"), pt.Declare(pt.Bool_t, "y")),
     pt.Bool_t,
-    [pt.Return(pt.Neq(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.Neq(pt.Var("x"), pt.Var("y")))]),
 )
 
 program.add_func(
     "and_",
     (pt.Declare(pt.Bool_t, "x"), pt.Declare(pt.Bool_t, "y")),
     pt.Bool_t,
-    [pt.Return(pt.And(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.And(pt.Var("x"), pt.Var("y")))]),
 )
 
 program.add_func(
     "or_",
     (pt.Declare(pt.Bool_t, "x"), pt.Declare(pt.Bool_t, "y")),
     pt.Bool_t,
-    [pt.Return(pt.Or(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.Or(pt.Var("x"), pt.Var("y")))]),
 )
 
 program.add_func(
-    "not_", (pt.Declare(pt.Bool_t, "x"),), pt.Bool_t, [pt.Return(pt.Not(pt.Var("x"))),]
+    "not_",
+    (pt.Declare(pt.Bool_t, "x"),),
+    pt.Bool_t,
+    pt.Block([pt.Return(pt.Not(pt.Var("x")))]),
 )
 
 

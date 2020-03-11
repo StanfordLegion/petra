@@ -7,19 +7,19 @@ program = pt.Program("module")
 
 # Int8_t functions.
 
-program.add_func("return_m2_i8", (), pt.Int8_t, [pt.Return(pt.Int8(-2)),])
+program.add_func("return_m2_i8", (), pt.Int8_t, pt.Block([pt.Return(pt.Int8(-2))]))
 
-program.add_func("return_0_i8", (), pt.Int8_t, [pt.Return(pt.Int8(0)),])
+program.add_func("return_0_i8", (), pt.Int8_t, pt.Block([pt.Return(pt.Int8(0))]))
 
-program.add_func("return_2_i8", (), pt.Int8_t, [pt.Return(pt.Int8(2)),])
+program.add_func("return_2_i8", (), pt.Int8_t, pt.Block([pt.Return(pt.Int8(2))]))
 
 # Int32_t functions.
 
-program.add_func("return_m2_i32", (), pt.Int32_t, [pt.Return(pt.Int32(-2)),])
+program.add_func("return_m2_i32", (), pt.Int32_t, pt.Block([pt.Return(pt.Int32(-2))]))
 
-program.add_func("return_0_i32", (), pt.Int32_t, [pt.Return(pt.Int32(0)),])
+program.add_func("return_0_i32", (), pt.Int32_t, pt.Block([pt.Return(pt.Int32(0))]))
 
-program.add_func("return_2_i32", (), pt.Int32_t, [pt.Return(pt.Int32(2)),])
+program.add_func("return_2_i32", (), pt.Int32_t, pt.Block([pt.Return(pt.Int32(2))]))
 
 
 class ConstantsTestCase(unittest.TestCase):

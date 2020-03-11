@@ -3,6 +3,7 @@ This package defines the Petra library.
 """
 
 from .arithmetic import Add, Sub, Mul, Div, Mod
+from .block import Block
 from .call import Call
 from .conditionals import If
 from .constant import Bool, Float, Int8, Int32

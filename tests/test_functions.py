@@ -5,26 +5,31 @@ from ctypes import CFUNCTYPE, c_int32
 
 program = pt.Program("module")
 
-program.add_func("return_2", (), pt.Int32_t, [pt.Return(pt.Int32(2)),])
+program.add_func("return_2", (), pt.Int32_t, pt.Block([pt.Return(pt.Int32(2))]))
 
-program.add_func("call_return_2", (), pt.Int32_t, [pt.Return(pt.Call("return_2", [])),])
+program.add_func(
+    "call_return_2", (), pt.Int32_t, pt.Block([pt.Return(pt.Call("return_2", []))])
+)
 
 program.add_func(
     "call_return_2_discard",
     (),
     pt.Int32_t,
-    [pt.Call("return_2", []), pt.Return(pt.Int32(3)),],
+    pt.Block([pt.Call("return_2", []), pt.Return(pt.Int32(3))]),
 )
 
 program.add_func(
-    "iden", (pt.Declare(pt.Int32_t, "x"),), pt.Int32_t, [pt.Return(pt.Var("x")),]
+    "iden",
+    (pt.Declare(pt.Int32_t, "x"),),
+    pt.Int32_t,
+    pt.Block([pt.Return(pt.Var("x"))]),
 )
 
 program.add_func(
     "sum",
     (pt.Declare(pt.Int32_t, "x"), pt.Declare(pt.Int32_t, "y")),
     pt.Int32_t,
-    [pt.Return(pt.Add(pt.Var("x"), pt.Var("y"))),],
+    pt.Block([pt.Return(pt.Add(pt.Var("x"), pt.Var("y")))]),
 )
 
 
@@ -67,6 +72,11 @@ class FunctionsTestCase(unittest.TestCase):
 
     def test_return_call_nothing_for_int32_t(self):
         with self.assertRaises(pt.TypeCheckError):
-            pt.Program("module").add_func("nothing", (), (), [pt.Return(()),]).add_func(
-                "call_nothing", (), pt.Int32_t, [pt.Return(pt.Call("nothing", [])),]
+            pt.Program("module").add_func(
+                "nothing", (), (), pt.Block([pt.Return(())])
+            ).add_func(
+                "call_nothing",
+                (),
+                pt.Int32_t,
+                pt.Block([pt.Return(pt.Call("nothing", []))]),
             )

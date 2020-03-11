@@ -7,6 +7,7 @@ import re
 from llvmlite import ir  # type:ignore
 from typing import Dict, List, Tuple
 
+from .block import Block
 from .codegen import convert_type, CodegenContext
 from .statement import Declare, Statement, Return
 from .validate import ValidateError
@@ -24,13 +25,13 @@ class Function(object):
         name: str,
         args: Tuple[Declare, ...],
         t_out: Ftypeout,
-        statements: List[Statement],
+        block: Block,
         functypes: Dict[str, Tuple[Ftypein, Ftypeout]],
     ):
         self.name = name
         self.args = args
         self.t_out = t_out
-        self.statements = statements
+        self.block = block
         self.validate()
         # Initial typecontext should contain arguments
         ctx = TypeContext(functypes, t_out)
@@ -54,21 +55,10 @@ class Function(object):
                     "Argument '%s' does not match regex "
                     "^[a-z][a-zA-Z0-9_]*$" % arg.name
                 )
-        # check for inaccessible return statements
-        # TODO: This needs to be updated to take branching logic into account.
-        # It can be viewed as a DAG where every path must end in a return with
-        # nothing after.
-        found_first_return = False
-        for statement in self.statements:
-            statement.validate()
-            if isinstance(statement, Return):
-                if found_first_return:
-                    raise ValidateError("Found inaccessible return statement.")
-                found_first_return = True
+        self.block.validate()
 
     def typecheck(self, ctx: TypeContext) -> None:
-        for statement in self.statements:
-            statement.typecheck(ctx)
+        self.block.typecheck(ctx)
 
     def codegen(self, module: ir.Module, funcs: Dict[str, ir.Function]) -> None:
         block = funcs[self.name].append_basic_block(name="start")
@@ -79,5 +69,4 @@ class Function(object):
             var = builder.alloca(convert_type(arg.t), name=arg.name)
             builder.store(funcs[self.name].args[i], var)
             ctx.vars[arg.name] = var
-        for statement in self.statements:
-            statement.codegen(builder, ctx)
+        self.block.codegen(builder, ctx)

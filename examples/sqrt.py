@@ -8,7 +8,7 @@ program.add_func(
     "call_sqrtf",
     (pt.Declare(pt.Float_t, "x"),),
     pt.Float_t,
-    [pt.Return(pt.Call("sqrtf", [pt.Var("x")])),],
+    pt.Block([pt.Return(pt.Call("sqrtf", [pt.Var("x")]))]),
 )
 
 print(program.to_llvm())

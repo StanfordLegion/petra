@@ -12,9 +12,7 @@ install:
   - pip install -e .
   - pip install -r requirements-dev.txt
 script:
+  - ./run_mypy.sh
   - ./run_tests.sh
-  - mypy petra
-  - mypy examples
-  - mypy tests
   - black --check .
   - black --diff .
