@@ -6,7 +6,7 @@ export MYPYPATH=$PWD/stubs
 
 flags=(
     --disallow-any-unimported
-    # --disallow-any-expr
+    --disallow-any-expr
     --disallow-any-decorated
     --disallow-any-explicit
     --disallow-any-generics

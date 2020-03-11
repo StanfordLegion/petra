@@ -1,3 +1,5 @@
+from typing import cast, Callable
+
 import petra as pt
 import unittest
 
@@ -105,10 +107,10 @@ class ConstantsTestCase(unittest.TestCase):
         self.engine = program.compile()
 
         add_i8 = self.engine.get_function_address("add_i8")
-        self.add_i8 = CFUNCTYPE(c_int8)(add_i8)
+        self.add_i8 = cast(Callable[[], int], CFUNCTYPE(c_int8)(add_i8))
 
         add_i32 = self.engine.get_function_address("add_i32")
-        self.add_i32 = CFUNCTYPE(c_int32)(add_i32)
+        self.add_i32 = cast(Callable[[], int], CFUNCTYPE(c_int32)(add_i32))
 
     def test_add_i8(self) -> None:
         self.assertEqual(self.add_i8(), -11)

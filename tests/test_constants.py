@@ -1,3 +1,5 @@
+from typing import cast, Callable
+
 import petra as pt
 import unittest
 
@@ -27,22 +29,22 @@ class ConstantsTestCase(unittest.TestCase):
         self.engine = program.compile()
 
         return_m2_i8 = self.engine.get_function_address("return_m2_i8")
-        self.return_m2_i8 = CFUNCTYPE(c_int8)(return_m2_i8)
+        self.return_m2_i8 = cast(Callable[[], int], CFUNCTYPE(c_int8)(return_m2_i8))
 
         return_0_i8 = self.engine.get_function_address("return_0_i8")
-        self.return_0_i8 = CFUNCTYPE(c_int8)(return_0_i8)
+        self.return_0_i8 = cast(Callable[[], int], CFUNCTYPE(c_int8)(return_0_i8))
 
         return_2_i8 = self.engine.get_function_address("return_2_i8")
-        self.return_2_i8 = CFUNCTYPE(c_int8)(return_2_i8)
+        self.return_2_i8 = cast(Callable[[], int], CFUNCTYPE(c_int8)(return_2_i8))
 
         return_m2_i32 = self.engine.get_function_address("return_m2_i32")
-        self.return_m2_i32 = CFUNCTYPE(c_int32)(return_m2_i32)
+        self.return_m2_i32 = cast(Callable[[], int], CFUNCTYPE(c_int32)(return_m2_i32))
 
         return_0_i32 = self.engine.get_function_address("return_0_i32")
-        self.return_0_i32 = CFUNCTYPE(c_int32)(return_0_i32)
+        self.return_0_i32 = cast(Callable[[], int], CFUNCTYPE(c_int32)(return_0_i32))
 
         return_2_i32 = self.engine.get_function_address("return_2_i32")
-        self.return_2_i32 = CFUNCTYPE(c_int32)(return_2_i32)
+        self.return_2_i32 = cast(Callable[[], int], CFUNCTYPE(c_int32)(return_2_i32))
 
     def test_return_m2_i8(self) -> None:
         self.assertEqual(self.return_m2_i8(), -2)

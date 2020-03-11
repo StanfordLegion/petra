@@ -56,7 +56,8 @@ class Program(object):
             binding.initialize()
             binding.initialize_native_target()
             binding.initialize_native_asmprinter()
-        target = binding.Target.from_default_triple()
+        # FIXME: Not sure why MyPy can't type check this, maybe a bug
+        target = binding.Target.from_default_triple() # type: ignore
         target_machine = target.create_target_machine()
         backing_mod = binding.parse_assembly(self.to_llvm())
         engine = binding.create_mcjit_compiler(backing_mod, target_machine)

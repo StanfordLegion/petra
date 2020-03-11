@@ -67,6 +67,7 @@ class Function(object):
         # Treat function arguments as variables declared at the beginning.
         for i, arg in enumerate(self.args):
             var = builder.alloca(convert_type(arg.t), name=arg.name)
-            builder.store(funcs[self.name].args[i], var)
+            # FIXME: I'm not sure why I can't get this to type check
+            builder.store(funcs[self.name].args[i], var) # type: ignore
             ctx.vars[arg.name] = var
         self.block.codegen(builder, ctx)

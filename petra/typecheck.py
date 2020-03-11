@@ -2,6 +2,8 @@
 This file defines the type context and errors.
 """
 
+from __future__ import annotations
+
 from typing import Dict, Tuple
 
 from .type import Ftypein, Ftypeout, Type

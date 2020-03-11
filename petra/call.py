@@ -61,6 +61,8 @@ class Call(Expr):
         self.t = t_out
 
     def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
-        args = tuple(map(lambda arg: arg.codegen(builder, ctx), self.args))
+        def codegen_arg(arg: Expr) -> ir.Value:
+            return arg.codegen(builder, ctx)
+        args = tuple(map(codegen_arg, self.args))
         func = ctx.funcs[self.name]
         return builder.call(func, args)
