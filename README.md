@@ -123,7 +123,7 @@ Two metatypes are defined for the inputs and outputs of a function.
 
 ## Statements
 
-  * `petra.If(pred: Expr, then_: List[Statement], else_: List[Statement])`
+  * `petra.If(pred: Expr, then_block: Block, else_block: Block)`
 
     Creates an if-else statement predicated on the given
     expression. The then and else clause can be empty.
