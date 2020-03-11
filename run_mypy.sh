@@ -15,6 +15,10 @@ flags=(
     --disallow-untyped-defs
     --disallow-incomplete-defs
     --disallow-untyped-decorators
+    --warn-redundant-casts
+    --warn-unused-ignores
+    --warn-return-any # redundant with --disallow-any-expr, but less strict
+    --warn-unreachable
 )
 
 set -x

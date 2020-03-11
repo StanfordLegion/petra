@@ -50,7 +50,8 @@ class ArithmeticBinop(Expr):
     def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
         left = self.left.codegen(builder, ctx)
         right = self.right.codegen(builder, ctx)
-        return getattr(builder, self.op)(left, right)
+        # FIXME: figure out a way to be able to type check this
+        return getattr(builder, self.op)(left, right) # type: ignore
 
 
 class Add(ArithmeticBinop):
