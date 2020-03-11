@@ -15,7 +15,7 @@ from .type import Type
 from .typecheck import TypeContext, TypeCheckError
 
 
-class Call(Expr):
+class Call(Statement, Expr):
     """
     A function call expression.
     """
