@@ -20,8 +20,10 @@ class CodegenContext(object):
 
 def convert_func_type(t_in: Ftypein, t_out: Ftypeout) -> ir.FunctionType:
     llvm_t_in: Tuple[ir.Type, ...] = ()
+
     def convert_type(t: Type) -> ir.Type:
         return t.llvm_type()
+
     if len(t_in) > 0:
         llvm_t_in = tuple(map(convert_type, t_in))
     llvm_t_out: ir.Type = ir.VoidType()

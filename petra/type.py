@@ -8,6 +8,7 @@ from typing import Generic, Optional, Tuple, TypeVar, Union
 
 from .validate import ValidateError
 
+
 class Type(object):
     """
     A type.
@@ -25,7 +26,10 @@ class Type(object):
         """
         assert False, "unimplemented"
 
+
 _T = TypeVar("_T")
+
+
 class ValueType(Type, Generic[_T]):
     def validate(self, value: _T) -> None:
         """
@@ -33,22 +37,27 @@ class ValueType(Type, Generic[_T]):
         """
         assert False, "unimplemented"
 
+
 class IntType(ValueType[int]):
     """
     An integer type.
     """
 
     def __init__(self, bits: int):
-        super().__init__('Int%d_t' % bits)
+        super().__init__("Int%d_t" % bits)
         self.bits = bits
 
     def validate(self, value: int) -> None:
         exp = self.bits - 1
         if not (-(1 << exp) <= value < (1 << exp)):
-            raise ValidateError("Int%d_t value not in the range [-2**%d, 2**%d)." % (self.bits, exp, exp))
+            raise ValidateError(
+                "Int%d_t value not in the range [-2**%d, 2**%d)."
+                % (self.bits, exp, exp)
+            )
 
     def llvm_type(self) -> ir.Type:
         return ir.IntType(self.bits)
+
 
 class FloatType(ValueType[float]):
     """
@@ -58,7 +67,7 @@ class FloatType(ValueType[float]):
     def __init__(self, bits: int, name: Optional[str] = None):
         if bits not in (32, 64):
             raise ValidateError("Float bits must be 32 or 64")
-        super().__init__(name or 'Float%d_t' % bits)
+        super().__init__(name or "Float%d_t" % bits)
         self.bits = bits
 
     def validate(self, value: float) -> None:
@@ -72,19 +81,21 @@ class FloatType(ValueType[float]):
         else:
             assert False
 
+
 class BoolType(ValueType[bool]):
     """
     An boolean type.
     """
 
     def __init__(self) -> None:
-        super().__init__('Bool_t')
+        super().__init__("Bool_t")
 
     def validate(self, value: bool) -> None:
         pass
 
     def llvm_type(self) -> ir.Type:
         return ir.IntType(1)
+
 
 # Type aliases for functions.
 Ftypein = Tuple[Type, ...]

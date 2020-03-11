@@ -16,6 +16,8 @@ from .typecheck import TypeContext
 #
 
 _VT = TypeVar("_VT")
+
+
 class Constant(Expr, Generic[_VT]):
     """
     A constant expression.
@@ -38,6 +40,7 @@ class Constant(Expr, Generic[_VT]):
     def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
         return ir.Constant(self.t.llvm_type(), self.value)
 
+
 class Int8(Constant[int]):
     """
     An Int8_t constant.
@@ -45,6 +48,7 @@ class Int8(Constant[int]):
 
     def __init__(self, value: int):
         super().__init__(value, Int8_t)
+
 
 class Int32(Constant[int]):
     """
@@ -54,6 +58,7 @@ class Int32(Constant[int]):
     def __init__(self, value: int):
         super().__init__(value, Int32_t)
 
+
 class Float32(Constant[float]):
     """
     An Float32_t constant.
@@ -62,6 +67,7 @@ class Float32(Constant[float]):
     def __init__(self, value: float):
         super().__init__(value, Float32_t)
 
+
 class Float64(Constant[float]):
     """
     An Float64_t constant.
@@ -69,6 +75,7 @@ class Float64(Constant[float]):
 
     def __init__(self, value: float):
         super().__init__(value, Float64_t)
+
 
 class Bool(Constant[bool]):
     """
