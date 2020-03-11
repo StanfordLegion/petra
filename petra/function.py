@@ -8,7 +8,7 @@ from llvmlite import ir
 from typing import Dict, List, Tuple
 
 from .block import Block
-from .codegen import convert_type, CodegenContext
+from .codegen import CodegenContext
 from .statement import Declare, Statement, Return
 from .validate import ValidateError
 from .type import Ftypein, Ftypeout, Type
@@ -66,7 +66,7 @@ class Function(object):
         ctx = CodegenContext(funcs)
         # Treat function arguments as variables declared at the beginning.
         for i, arg in enumerate(self.args):
-            var = builder.alloca(convert_type(arg.t), name=arg.name)
+            var = builder.alloca(arg.t.llvm_type(), name=arg.name)
             # FIXME: I'm not sure why I can't get this to type check
             builder.store(funcs[self.name].args[i], var)  # type: ignore
             ctx.vars[arg.name] = var

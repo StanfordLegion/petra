@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from llvmlite import ir
 from typing import Tuple, Union
 
-from .codegen import convert_type, CodegenContext
+from .codegen import CodegenContext
 from .expr import Expr, Var
 from .validate import ValidateError
 from .type import Type
@@ -112,7 +112,7 @@ class Assign(Statement):
         exp = self.e.codegen(builder, ctx)
         if isinstance(self.var, Declare):
             ctx.vars[self.var.name] = builder.alloca(
-                convert_type(self.var.t), name=self.var.name
+                self.var.t.llvm_type(), name=self.var.name
             )
         builder.store(exp, ctx.vars[self.var.name])
 

@@ -5,7 +5,7 @@ This file defines Petra comparisons and boolean logic.
 from llvmlite import ir
 from typing import Optional
 
-from .codegen import convert_type, CodegenContext
+from .codegen import CodegenContext
 from .expr import Expr
 from .validate import ValidateError
 from .type import Bool_t, Int8_t, Int32_t, Type
@@ -192,7 +192,7 @@ class And(Logical):
 
     def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
         left = self.left.codegen(builder, ctx)
-        temp = builder.alloca(convert_type(Bool_t))
+        temp = builder.alloca(Bool_t.llvm_type())
         builder.store(left, temp)
         with builder.if_then(left):
             right = self.right.codegen(builder, ctx)
@@ -207,9 +207,9 @@ class Or(Logical):
 
     def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
         left = self.left.codegen(builder, ctx)
-        temp = builder.alloca(convert_type(Bool_t))
+        temp = builder.alloca(Bool_t.llvm_type())
         builder.store(left, temp)
-        notleft = builder.sub(ir.Constant(convert_type(Bool_t), True), left)
+        notleft = builder.sub(ir.Constant(Bool_t.llvm_type(), True), left)
         with builder.if_then(notleft):
             right = self.right.codegen(builder, ctx)
             builder.store(right, temp)
@@ -249,4 +249,4 @@ class Not(Expr):
 
     def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
         value = self.e.codegen(builder, ctx)
-        return builder.sub(ir.Constant(convert_type(Bool_t), True), value)
+        return builder.sub(ir.Constant(Bool_t.llvm_type(), True), value)
