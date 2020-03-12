@@ -145,31 +145,39 @@ Two metatypes are defined for the inputs and outputs of a function.
     Creates a function call statement to a function that was either
     declared extern or previously added to the program.
 
-  * `petra.Declare(t: Type, name: str)`
+  * `petra.DefineVar(symbol: Symbol, value: Expr)`
 
-    Creates a variable declaration, which can be used in assignemnts
-    or when adding a function to a program. The name must pass the
-    regex `r"^[a-z][a-zA-z0-9_]*$"`. Variables cannot be redeclared
-    within a scope (defined by a function or an if/else clause).
+    Defines a new variable. Variables with the same symbol cannot be
+    redeclared within a scope (defined by a function or an if/else
+    clause).
 
-    `petra.Declare` is not actually a statement but can be used in an
-    Assign statement.
-
-  * `petra.Assign(var: Union[Declare, Var], e: Expr)`
+  * `petra.Assign(var: Var, value: Expr)`
 
     Creates an assignment statement assigning the expression to either
-    to a newly declared variable or an existing one.
+    to an existing variable.
 
   * `petra.Return(e: Union[Tuple[()], Expr])`
 
     Creates a return statement that returns either nothing or an
     expression.
 
+## Symbols
+
+  * `petra.Symbol(type_: Type, name: str)`
+
+    Creates a symbol, which can be used in variable declarations,
+    assignments or when adding parameters to a function. The name must
+    pass the regex `r"^[a-z][a-zA-z0-9_]*$"`. Note that the name is
+    only used for display to humans and that every symbol is unique
+    regardless of name. Two (or more) symbols with the same name can
+    be defined in the same scope, but a given symbol may be defined in
+    a scope only once.
+
 ## Expressions
 
 ### Variables
 
-  * `petra.Var(name: str)`
+  * `petra.Var(symbol: Symbol)`
 
     Creates a variable reference to an argument or previously declared variable.
 
