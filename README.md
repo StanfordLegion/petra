@@ -116,6 +116,11 @@ Two metatypes are defined for the inputs and outputs of a function.
 
      Returns an unoptimized LLVM representation of the program as a string.
 
+  * `petra.Program.save_object(filename: str)`
+
+     Saves an unoptimized object file of the program suitable for
+     passing to the platform linker.
+
   * `petra.Program.compile()`
 
     Returns a MCJIT execution engine with the program loaded. See
@@ -298,10 +303,13 @@ partial list:
   - casting between types
 
 In addition, parts of Petra infrastructure could be improved:
+
   - Some error messages could be reworded or tested due to lack of usage.
-  - Petra's testing framework, while decently robust, is missing a lot of tests.
-  An unfortunate side-effect is that there may be latent bugs in the compiler as
-  well.
+  - Petra's testing framework, while decently robust, is missing a lot
+    of tests.  An unfortunate side-effect is that there may be latent
+    bugs in the compiler as well.
+  - Run optimizations on the generated code.
+  - Generate debug symbols in the generated code.
 
 # Acknowledgements
 
