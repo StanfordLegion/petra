@@ -11,4 +11,4 @@ program.add_func(
     pt.Block([pt.Return(pt.Call("sqrtf", [pt.Var("x")]))]),
 )
 
-print(program.to_llvm())
+program.save_object("sqrt.py.o")

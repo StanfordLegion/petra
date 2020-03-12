@@ -50,6 +50,19 @@ class Program(object):
     def to_llvm(self) -> str:
         return str(self.module)
 
+    def save_object(self, filename: str) -> None:
+        if not self.llvm_initialized:
+            self.llvm_initialized = True
+            binding.initialize()
+            binding.initialize_native_target()
+            binding.initialize_native_asmprinter()
+        # FIXME: Not sure why MyPy can't type check this, maybe a bug
+        target = binding.Target.from_default_triple()  # type: ignore
+        target_machine = target.create_target_machine()
+        backing_mod = binding.parse_assembly(self.to_llvm())
+        with open(filename, "wb") as f:
+            f.write(target_machine.emit_object(backing_mod))
+
     def compile(self) -> binding.ExecutionEngine:
         if not self.llvm_initialized:
             self.llvm_initialized = True

@@ -30,4 +30,4 @@ program.add_func(
     ),
 )
 
-print(program.to_llvm())
+program.save_object("collatz.py.o")
