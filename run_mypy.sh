@@ -19,7 +19,7 @@ flags=(
     --warn-unused-ignores
     --warn-return-any # redundant with --disallow-any-expr, but less strict
     --warn-unreachable
-     --no-incremental # IMPORANT: incremental mode seems to be buggy, at least as of version 0.770
+    # --no-incremental # IMPORANT: if you change the flags for MyPy, uncomment this line to flush the cache
 )
 
 set -x

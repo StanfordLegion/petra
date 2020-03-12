@@ -9,10 +9,11 @@ from typing import Dict, List, Tuple
 
 from .block import Block
 from .codegen import CodegenContext
-from .statement import Declare, Statement, Return
-from .validate import ValidateError
+from .statement import Statement, Return
+from .symbol import Symbol
 from .type import Ftypein, Ftypeout, Type
 from .typecheck import TypeContext, TypeCheckError
+from .validate import ValidateError
 
 
 class Function(object):
@@ -23,7 +24,7 @@ class Function(object):
     def __init__(
         self,
         name: str,
-        args: Tuple[Declare, ...],
+        args: Tuple[Symbol, ...],
         t_out: Ftypeout,
         block: Block,
         functypes: Dict[str, Tuple[Ftypein, Ftypeout]],
@@ -36,9 +37,9 @@ class Function(object):
         # Initial typecontext should contain arguments
         ctx = TypeContext(functypes, t_out)
         for arg in self.args:
-            if arg.name in ctx.types:
-                raise TypeCheckError("Cannot redeclare variable %s" % arg.name)
-            ctx.types[arg.name] = arg.t
+            if arg in ctx.variables:
+                raise TypeCheckError("Parameter '%s' declared multiple times" % arg)
+            ctx.variables.add(arg)
         self.typecheck(ctx)
 
     def validate(self) -> None:
@@ -66,8 +67,8 @@ class Function(object):
         ctx = CodegenContext(funcs)
         # Treat function arguments as variables declared at the beginning.
         for i, arg in enumerate(self.args):
-            var = builder.alloca(arg.t.llvm_type(), name=arg.name)
+            var = builder.alloca(arg.get_type().llvm_type(), name=arg.unique_name())
             # FIXME: I'm not sure why I can't get this to type check
             builder.store(funcs[self.name].args[i], var)  # type: ignore
-            ctx.vars[arg.name] = var
+            ctx.vars[arg] = var
         self.block.codegen(builder, ctx)

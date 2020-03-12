@@ -10,9 +10,10 @@ from typing import Tuple, Union
 
 from .codegen import CodegenContext
 from .expr import Expr, Var
-from .validate import ValidateError
+from .symbol import Symbol
 from .type import Type
 from .typecheck import TypeContext, TypeCheckError
+from .validate import ValidateError
 
 #
 # Statement
@@ -59,62 +60,75 @@ class Statement(ABC):
 # Assign
 #
 
-# Declare is an artifact of Assign, and is not a Statement or any kind of core
-# object on its own.
-class Declare(object):
+
+class DefineVar(Statement):
     """
-    Declares a new variable. Only valid as the assignee in an Assign statement
-    or when adding a function.
+    Defines a new variable.
     """
 
-    def __init__(self, t: Type, name: str):
-        self.t = t
-        self.name = name
+    def __init__(self, symbol: Symbol, value: Expr):
+        self.symbol = symbol
+        self.value = value
+        self.validate()
+
+    def validate(self) -> None:
+        self.symbol.validate()
+        self.value.validate()
+
+    def typecheck(self, ctx: TypeContext) -> None:
+        self.value.typecheck(ctx)
+
+        if self.symbol in ctx.variables:
+            raise TypeCheckError("Variable '%s' declared multiple times" % self.symbol)
+        ctx.variables.add(self.symbol)
+
+        expected_type = self.value.get_type()
+        if self.symbol.get_type() != expected_type:
+            raise TypeCheckError(
+                "Cannot assign expression of type %s to variable '%s' of"
+                "type %s" % (expected_type, self.symbol, self.symbol.get_type())
+            )
+
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> None:
+        value = self.value.codegen(builder, ctx)
+        ctx.vars[self.symbol] = builder.alloca(
+            self.symbol.get_type().llvm_type(), name=self.symbol.unique_name()
+        )
+        builder.store(value, ctx.vars[self.symbol])
+
+
+#
+# Assign
+#
 
 
 class Assign(Statement):
     """
-    Assigns an expression into a possibly new variable.
+    Assigns an expression into a variable.
     """
 
-    def __init__(self, var: Union[Declare, Var], e: Expr):
+    def __init__(self, var: Var, value: Expr):
         self.var = var
-        self.e = e
+        self.value = value
         self.validate()
 
     def validate(self) -> None:
-        if isinstance(self.var, Declare):
-            if not re.match(r"^[a-z][a-zA-Z0-9_]*$", self.var.name):
-                raise ValidateError(
-                    "Variable name '%s' does not match regex "
-                    "^[a-z][a-zA-Z0-9_]*$" % self.var.name
-                )
-        else:
-            self.var.validate()
-        self.e.validate()
+        self.var.validate()
+        self.value.validate()
 
     def typecheck(self, ctx: TypeContext) -> None:
-        self.e.typecheck(ctx)
-        if isinstance(self.var, Declare):
-            if self.var.name in ctx.types:
-                raise TypeCheckError("Cannot redeclare variable %s" % self.var.name)
-            ctx.types[self.var.name] = self.var.t
-        else:
-            self.var.typecheck(ctx)
-        expected_type = self.e.get_type()
-        if ctx.types[self.var.name] != expected_type:
+        self.var.typecheck(ctx)
+        self.value.typecheck(ctx)
+        expected_type = self.value.get_type()
+        if self.var.get_type() != expected_type:
             raise TypeCheckError(
-                "Cannot assign expression of type %s to variable of"
-                "type %s" % (expected_type, ctx.types[self.var.name])
+                "Cannot assign expression of type %s to variable '%s' of"
+                "type %s" % (expected_type, self.var.symbol, self.var.get_type())
             )
 
     def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> None:
-        exp = self.e.codegen(builder, ctx)
-        if isinstance(self.var, Declare):
-            ctx.vars[self.var.name] = builder.alloca(
-                self.var.t.llvm_type(), name=self.var.name
-            )
-        builder.store(exp, ctx.vars[self.var.name])
+        value = self.value.codegen(builder, ctx)
+        builder.store(value, ctx.vars[self.var.symbol])
 
 
 #

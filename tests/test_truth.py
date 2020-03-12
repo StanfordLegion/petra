@@ -7,81 +7,51 @@ from ctypes import CFUNCTYPE, c_bool, c_int8
 
 program = pt.Program("module")
 
+x, y = pt.Symbol(pt.Int8_t, "x"), pt.Symbol(pt.Int8_t, "y")
+z, w = pt.Symbol(pt.Bool_t, "z"), pt.Symbol(pt.Bool_t, "w")
+
 program.add_func(
-    "lt",
-    (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.Lt(pt.Var("x"), pt.Var("y")))]),
+    "lt", (x, y), pt.Bool_t, pt.Block([pt.Return(pt.Lt(pt.Var(x), pt.Var(y)))]),
 )
 
 program.add_func(
-    "lte",
-    (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.Lte(pt.Var("x"), pt.Var("y")))]),
+    "lte", (x, y), pt.Bool_t, pt.Block([pt.Return(pt.Lte(pt.Var(x), pt.Var(y)))]),
 )
 
 program.add_func(
-    "gt",
-    (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.Gt(pt.Var("x"), pt.Var("y")))]),
+    "gt", (x, y), pt.Bool_t, pt.Block([pt.Return(pt.Gt(pt.Var(x), pt.Var(y)))]),
 )
 
 program.add_func(
-    "gte",
-    (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.Gte(pt.Var("x"), pt.Var("y")))]),
+    "gte", (x, y), pt.Bool_t, pt.Block([pt.Return(pt.Gte(pt.Var(x), pt.Var(y)))]),
 )
 
 program.add_func(
-    "eq",
-    (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.Eq(pt.Var("x"), pt.Var("y")))]),
+    "eq", (x, y), pt.Bool_t, pt.Block([pt.Return(pt.Eq(pt.Var(x), pt.Var(y)))]),
 )
 
 program.add_func(
-    "eqb",
-    (pt.Declare(pt.Bool_t, "x"), pt.Declare(pt.Bool_t, "y")),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.Eq(pt.Var("x"), pt.Var("y")))]),
+    "eqb", (z, w), pt.Bool_t, pt.Block([pt.Return(pt.Eq(pt.Var(z), pt.Var(w)))]),
 )
 
 program.add_func(
-    "neq",
-    (pt.Declare(pt.Int8_t, "x"), pt.Declare(pt.Int8_t, "y")),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.Neq(pt.Var("x"), pt.Var("y")))]),
+    "neq", (x, y), pt.Bool_t, pt.Block([pt.Return(pt.Neq(pt.Var(x), pt.Var(y)))]),
 )
 
 program.add_func(
-    "neqb",
-    (pt.Declare(pt.Bool_t, "x"), pt.Declare(pt.Bool_t, "y")),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.Neq(pt.Var("x"), pt.Var("y")))]),
+    "neqb", (z, w), pt.Bool_t, pt.Block([pt.Return(pt.Neq(pt.Var(z), pt.Var(w)))]),
 )
 
 program.add_func(
-    "and_",
-    (pt.Declare(pt.Bool_t, "x"), pt.Declare(pt.Bool_t, "y")),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.And(pt.Var("x"), pt.Var("y")))]),
+    "and_", (z, w), pt.Bool_t, pt.Block([pt.Return(pt.And(pt.Var(z), pt.Var(w)))]),
 )
 
 program.add_func(
-    "or_",
-    (pt.Declare(pt.Bool_t, "x"), pt.Declare(pt.Bool_t, "y")),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.Or(pt.Var("x"), pt.Var("y")))]),
+    "or_", (z, w), pt.Bool_t, pt.Block([pt.Return(pt.Or(pt.Var(z), pt.Var(w)))]),
 )
 
 program.add_func(
-    "not_",
-    (pt.Declare(pt.Bool_t, "x"),),
-    pt.Bool_t,
-    pt.Block([pt.Return(pt.Not(pt.Var("x")))]),
+    "not_", (z,), pt.Bool_t, pt.Block([pt.Return(pt.Not(pt.Var(z)))]),
 )
 
 

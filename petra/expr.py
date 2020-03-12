@@ -10,6 +10,7 @@ from typing import Optional
 
 from .codegen import CodegenContext
 from .validate import ValidateError
+from .symbol import Symbol
 from .type import Type
 from .typecheck import TypeContext, TypeCheckError
 
@@ -65,28 +66,20 @@ class Var(Expr):
     use.
     """
 
-    def __init__(self, name: str):
-        self.name = name
-        self.t: Optional[Type] = None
+    def __init__(self, symbol: Symbol):
+        self.symbol = symbol
         self.validate()
 
     def get_type(self) -> Type:
-        if isinstance(self.t, Type):
-            return self.t
-        raise Exception("Expected type to exist - was typecheck called?")
+        return self.symbol.get_type()
 
     def validate(self) -> None:
-        if not re.match(r"^[a-z][a-zA-Z0-9_]*$", self.name):
-            raise ValidateError(
-                "Variable name '%s' does not match regex "
-                "^[a-z][a-zA-Z0-9_]*$" % self.name
-            )
+        pass
 
     def typecheck(self, ctx: TypeContext) -> None:
-        if self.name not in ctx.types:
-            raise TypeCheckError("Unknown variable %s" % self.name)
-        self.t = ctx.types[self.name]
+        if self.symbol not in ctx.variables:
+            raise TypeCheckError("Variable '%s' not defined" % self.symbol)
 
     def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
-        var = ctx.vars[self.name]
-        return builder.load(ctx.vars[self.name], name=self.name)
+        var = ctx.vars[self.symbol]
+        return builder.load(ctx.vars[self.symbol], name=self.symbol.unique_name())

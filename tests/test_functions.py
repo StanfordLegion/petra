@@ -7,6 +7,8 @@ from ctypes import CFUNCTYPE, c_int32
 
 program = pt.Program("module")
 
+x, y = pt.Symbol(pt.Int32_t, "x"), pt.Symbol(pt.Int32_t, "y")
+
 program.add_func("return_2", (), pt.Int32_t, pt.Block([pt.Return(pt.Int32(2))]))
 
 program.add_func(
@@ -21,17 +23,11 @@ program.add_func(
 )
 
 program.add_func(
-    "iden",
-    (pt.Declare(pt.Int32_t, "x"),),
-    pt.Int32_t,
-    pt.Block([pt.Return(pt.Var("x"))]),
+    "iden", (x,), pt.Int32_t, pt.Block([pt.Return(pt.Var(x))]),
 )
 
 program.add_func(
-    "sum",
-    (pt.Declare(pt.Int32_t, "x"), pt.Declare(pt.Int32_t, "y")),
-    pt.Int32_t,
-    pt.Block([pt.Return(pt.Add(pt.Var("x"), pt.Var("y")))]),
+    "sum", (x, y), pt.Int32_t, pt.Block([pt.Return(pt.Add(pt.Var(x), pt.Var(y)))]),
 )
 
 

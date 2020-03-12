@@ -11,37 +11,46 @@ program = pt.Program("module")
 
 # TODO(adbenson): refactor this to take in arguments for better testing
 
+a = pt.Symbol(pt.Int8_t, "a")
+b = pt.Symbol(pt.Int8_t, "b")
+c = pt.Symbol(pt.Int8_t, "c")
+d = pt.Symbol(pt.Int8_t, "d")
+e = pt.Symbol(pt.Int8_t, "e")
+f = pt.Symbol(pt.Int8_t, "f")
+g = pt.Symbol(pt.Int8_t, "g")
+h = pt.Symbol(pt.Int8_t, "h")
+i = pt.Symbol(pt.Int8_t, "i")
+
 program.add_func(
     "add_i8",
     (),
     pt.Int8_t,
     pt.Block(
         [
-            pt.Assign(pt.Declare(pt.Int8_t, "a"), pt.Add(pt.Int8(-11), pt.Int8(-4))),
-            pt.Assign(pt.Declare(pt.Int8_t, "b"), pt.Add(pt.Int8(-11), pt.Int8(0))),
-            pt.Assign(pt.Declare(pt.Int8_t, "c"), pt.Add(pt.Int8(-11), pt.Int8(7))),
-            pt.Assign(pt.Declare(pt.Int8_t, "d"), pt.Add(pt.Int8(0), pt.Int8(-5))),
-            pt.Assign(pt.Declare(pt.Int8_t, "e"), pt.Add(pt.Int8(0), pt.Int8(0))),
-            pt.Assign(pt.Declare(pt.Int8_t, "f"), pt.Add(pt.Int8(0), pt.Int8(3))),
-            pt.Assign(pt.Declare(pt.Int8_t, "g"), pt.Add(pt.Int8(7), pt.Int8(-8))),
-            pt.Assign(pt.Declare(pt.Int8_t, "h"), pt.Add(pt.Int8(7), pt.Int8(0))),
-            pt.Assign(pt.Declare(pt.Int8_t, "i"), pt.Add(pt.Int8(7), pt.Int8(8))),
+            pt.DefineVar(a, pt.Add(pt.Int8(-11), pt.Int8(-4))),
+            pt.DefineVar(b, pt.Add(pt.Int8(-11), pt.Int8(0))),
+            pt.DefineVar(c, pt.Add(pt.Int8(-11), pt.Int8(7))),
+            pt.DefineVar(d, pt.Add(pt.Int8(0), pt.Int8(-5))),
+            pt.DefineVar(e, pt.Add(pt.Int8(0), pt.Int8(0))),
+            pt.DefineVar(f, pt.Add(pt.Int8(0), pt.Int8(3))),
+            pt.DefineVar(g, pt.Add(pt.Int8(7), pt.Int8(-8))),
+            pt.DefineVar(h, pt.Add(pt.Int8(7), pt.Int8(0))),
+            pt.DefineVar(i, pt.Add(pt.Int8(7), pt.Int8(8))),
             pt.Return(
                 pt.Add(
-                    pt.Var("a"),
+                    pt.Var(a),
                     pt.Add(
-                        pt.Var("b"),
+                        pt.Var(b),
                         pt.Add(
-                            pt.Var("c"),
+                            pt.Var(c),
                             pt.Add(
-                                pt.Var("d"),
+                                pt.Var(d),
                                 pt.Add(
-                                    pt.Var("e"),
+                                    pt.Var(e),
                                     pt.Add(
-                                        pt.Var("f"),
+                                        pt.Var(f),
                                         pt.Add(
-                                            pt.Var("g"),
-                                            pt.Add(pt.Var("h"), pt.Var("i")),
+                                            pt.Var(g), pt.Add(pt.Var(h), pt.Var(i)),
                                         ),
                                     ),
                                 ),
@@ -58,37 +67,47 @@ program.add_func(
 
 # TODO(adbenson): refactor this to take in arguments for better testing
 
+a32 = pt.Symbol(pt.Int32_t, "a32")
+b32 = pt.Symbol(pt.Int32_t, "b32")
+c32 = pt.Symbol(pt.Int32_t, "c32")
+d32 = pt.Symbol(pt.Int32_t, "d32")
+e32 = pt.Symbol(pt.Int32_t, "e32")
+f32 = pt.Symbol(pt.Int32_t, "f32")
+g32 = pt.Symbol(pt.Int32_t, "g32")
+h32 = pt.Symbol(pt.Int32_t, "h32")
+i32 = pt.Symbol(pt.Int32_t, "i32")
+
 program.add_func(
     "add_i32",
     (),
     pt.Int32_t,
     pt.Block(
         [
-            pt.Assign(pt.Declare(pt.Int32_t, "a"), pt.Add(pt.Int32(-11), pt.Int32(-4))),
-            pt.Assign(pt.Declare(pt.Int32_t, "b"), pt.Add(pt.Int32(-11), pt.Int32(0))),
-            pt.Assign(pt.Declare(pt.Int32_t, "c"), pt.Add(pt.Int32(-11), pt.Int32(7))),
-            pt.Assign(pt.Declare(pt.Int32_t, "d"), pt.Add(pt.Int32(0), pt.Int32(-5))),
-            pt.Assign(pt.Declare(pt.Int32_t, "e"), pt.Add(pt.Int32(0), pt.Int32(0))),
-            pt.Assign(pt.Declare(pt.Int32_t, "f"), pt.Add(pt.Int32(0), pt.Int32(3))),
-            pt.Assign(pt.Declare(pt.Int32_t, "g"), pt.Add(pt.Int32(7), pt.Int32(-8))),
-            pt.Assign(pt.Declare(pt.Int32_t, "h"), pt.Add(pt.Int32(7), pt.Int32(0))),
-            pt.Assign(pt.Declare(pt.Int32_t, "i"), pt.Add(pt.Int32(7), pt.Int32(8))),
+            pt.DefineVar(a32, pt.Add(pt.Int32(-11), pt.Int32(-4))),
+            pt.DefineVar(b32, pt.Add(pt.Int32(-11), pt.Int32(0))),
+            pt.DefineVar(c32, pt.Add(pt.Int32(-11), pt.Int32(7))),
+            pt.DefineVar(d32, pt.Add(pt.Int32(0), pt.Int32(-5))),
+            pt.DefineVar(e32, pt.Add(pt.Int32(0), pt.Int32(0))),
+            pt.DefineVar(f32, pt.Add(pt.Int32(0), pt.Int32(3))),
+            pt.DefineVar(g32, pt.Add(pt.Int32(7), pt.Int32(-8))),
+            pt.DefineVar(h32, pt.Add(pt.Int32(7), pt.Int32(0))),
+            pt.DefineVar(i32, pt.Add(pt.Int32(7), pt.Int32(8))),
             pt.Return(
                 pt.Add(
-                    pt.Var("a"),
+                    pt.Var(a32),
                     pt.Add(
-                        pt.Var("b"),
+                        pt.Var(b32),
                         pt.Add(
-                            pt.Var("c"),
+                            pt.Var(c32),
                             pt.Add(
-                                pt.Var("d"),
+                                pt.Var(d32),
                                 pt.Add(
-                                    pt.Var("e"),
+                                    pt.Var(e32),
                                     pt.Add(
-                                        pt.Var("f"),
+                                        pt.Var(f32),
                                         pt.Add(
-                                            pt.Var("g"),
-                                            pt.Add(pt.Var("h"), pt.Var("i")),
+                                            pt.Var(g32),
+                                            pt.Add(pt.Var(h32), pt.Var(i32)),
                                         ),
                                     ),
                                 ),

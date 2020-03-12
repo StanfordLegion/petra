@@ -7,13 +7,15 @@ from ctypes import CFUNCTYPE, c_int32
 
 program = pt.Program("module")
 
+x = pt.Symbol(pt.Int32_t, "x")
+y = pt.Symbol(pt.Int32_t, "y")
+z = pt.Symbol(pt.Int8_t, "z")
+
 program.add_func(
     "return_temp",
     (),
     pt.Int32_t,
-    pt.Block(
-        [pt.Assign(pt.Declare(pt.Int32_t, "x"), pt.Int32(2)), pt.Return(pt.Var("x"))]
-    ),
+    pt.Block([pt.DefineVar(x, pt.Int32(2)), pt.Return(pt.Var(x))]),
 )
 
 program.add_func(
@@ -22,9 +24,9 @@ program.add_func(
     pt.Int32_t,
     pt.Block(
         [
-            pt.Assign(pt.Declare(pt.Int32_t, "x"), pt.Int32(2)),
-            pt.Assign(pt.Declare(pt.Int32_t, "y"), pt.Var("x")),
-            pt.Return(pt.Var("y")),
+            pt.DefineVar(x, pt.Int32(2)),
+            pt.DefineVar(y, pt.Var(x)),
+            pt.Return(pt.Var(y)),
         ]
     ),
 )
@@ -35,8 +37,8 @@ program.add_func(
     pt.Int32_t,
     pt.Block(
         [
-            pt.Assign(pt.Declare(pt.Int32_t, "x"), pt.Int32(500)),
-            pt.Assign(pt.Declare(pt.Int32_t, "y"), pt.Var("x")),
+            pt.DefineVar(x, pt.Int32(500)),
+            pt.DefineVar(y, pt.Var(x)),
             pt.Return(pt.Int32(2)),
         ]
     ),
@@ -48,9 +50,9 @@ program.add_func(
     pt.Int32_t,
     pt.Block(
         [
-            pt.Assign(pt.Declare(pt.Int32_t, "x"), pt.Int32(2)),
-            pt.Assign(pt.Declare(pt.Int32_t, "y"), pt.Var("x")),
-            pt.Return(pt.Var("x")),
+            pt.DefineVar(x, pt.Int32(2)),
+            pt.DefineVar(y, pt.Var(x)),
+            pt.Return(pt.Var(x)),
         ]
     ),
 )
@@ -90,36 +92,36 @@ class VarsTestCase(unittest.TestCase):
 
     def test_variable_name_starts_not_lowercase(self) -> None:
         with self.assertRaises(pt.ValidateError):
-            pt.Var("_")
+            pt.Symbol(pt.Int32_t, "_")
         with self.assertRaises(pt.ValidateError):
-            pt.Var("_a")
+            pt.Symbol(pt.Int32_t, "_a")
         with self.assertRaises(pt.ValidateError):
-            pt.Var("A")
+            pt.Symbol(pt.Int32_t, "A")
         with self.assertRaises(pt.ValidateError):
-            pt.Var("Aa")
+            pt.Symbol(pt.Int32_t, "Aa")
         with self.assertRaises(pt.ValidateError):
-            pt.Var("0")
+            pt.Symbol(pt.Int32_t, "0")
         with self.assertRaises(pt.ValidateError):
-            pt.Var("0a")
-        pt.Var("a")
-        pt.Var("aa")
+            pt.Symbol(pt.Int32_t, "0a")
+        pt.Symbol(pt.Int32_t, "a")
+        pt.Symbol(pt.Int32_t, "aa")
 
     def test_variable_name_contains_forbidden(self) -> None:
         with self.assertRaises(pt.ValidateError):
-            pt.Var("a*")
+            pt.Symbol(pt.Int32_t, "a*")
         with self.assertRaises(pt.ValidateError):
-            pt.Var("a-a")
+            pt.Symbol(pt.Int32_t, "a-a")
         with self.assertRaises(pt.ValidateError):
-            pt.Var("a+a")
+            pt.Symbol(pt.Int32_t, "a+a")
         with self.assertRaises(pt.ValidateError):
-            pt.Var("a🤔")
+            pt.Symbol(pt.Int32_t, "a🤔")
         with self.assertRaises(pt.ValidateError):
-            pt.Var("a猫")
+            pt.Symbol(pt.Int32_t, "a猫")
         with self.assertRaises(pt.ValidateError):
-            pt.Var("a ")
-        pt.Var("aBCD")
-        pt.Var("a_B_02")
-        pt.Var("a554")
+            pt.Symbol(pt.Int32_t, "a ")
+        pt.Symbol(pt.Int32_t, "aBCD")
+        pt.Symbol(pt.Int32_t, "a_B_02")
+        pt.Symbol(pt.Int32_t, "a554")
 
     def test_declare_undeclared_variable(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
@@ -127,12 +129,7 @@ class VarsTestCase(unittest.TestCase):
                 "foo",
                 (),
                 pt.Int32_t,
-                pt.Block(
-                    [
-                        pt.Assign(pt.Declare(pt.Int32_t, "x"), pt.Var("x")),
-                        pt.Return(pt.Int32(2)),
-                    ]
-                ),
+                pt.Block([pt.DefineVar(x, pt.Var(x)), pt.Return(pt.Int32(2)),]),
             )
 
     def test_assign_undeclared_variable(self) -> None:
@@ -142,14 +139,14 @@ class VarsTestCase(unittest.TestCase):
                 (),
                 pt.Int32_t,
                 pt.Block(
-                    [pt.Assign(pt.Var("x"), pt.Int32(500)), pt.Return(pt.Int32(2)),]
+                    [pt.Assign(pt.Var(x), pt.Int32(500)), pt.Return(pt.Int32(2)),]
                 ),
             )
 
     def test_return_undeclared_variable(self) -> None:
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
-                "foo", (), pt.Int32_t, pt.Block([pt.Return(pt.Var("x"))])
+                "foo", (), pt.Int32_t, pt.Block([pt.Return(pt.Var(x))])
             )
 
     def test_redeclared_variable(self) -> None:
@@ -160,8 +157,8 @@ class VarsTestCase(unittest.TestCase):
                 pt.Int32_t,
                 pt.Block(
                     [
-                        pt.Assign(pt.Declare(pt.Int32_t, "x"), pt.Int32(2)),
-                        pt.Assign(pt.Declare(pt.Int32_t, "x"), pt.Int32(3)),
+                        pt.DefineVar(x, pt.Int32(2)),
+                        pt.DefineVar(x, pt.Int32(3)),
                         pt.Return(pt.Int32(2)),
                     ]
                 ),
@@ -173,22 +170,12 @@ class VarsTestCase(unittest.TestCase):
                 "foo",
                 (),
                 pt.Int32_t,
-                pt.Block(
-                    [
-                        pt.Assign(pt.Declare(pt.Int8_t, "x"), pt.Int32(2)),
-                        pt.Return(pt.Int32(2)),
-                    ]
-                ),
+                pt.Block([pt.DefineVar(z, pt.Int32(2)), pt.Return(pt.Int32(2)),]),
             )
         with self.assertRaises(pt.TypeCheckError):
             pt.Program("module").add_func(
                 "foo",
                 (),
                 pt.Int32_t,
-                pt.Block(
-                    [
-                        pt.Assign(pt.Declare(pt.Int32_t, "x"), pt.Int8(2)),
-                        pt.Return(pt.Int32(2)),
-                    ]
-                ),
+                pt.Block([pt.DefineVar(x, pt.Int8(2)), pt.Return(pt.Int32(2)),]),
             )

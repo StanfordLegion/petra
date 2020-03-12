@@ -9,7 +9,8 @@ from typing import Dict, List, Tuple
 from .block import Block
 from .codegen import convert_func_type
 from .function import Ftypein, Ftypeout, Function
-from .statement import Declare, Statement
+from .statement import Statement
+from .symbol import Symbol
 
 
 class Program(object):
@@ -34,11 +35,11 @@ class Program(object):
         return self
 
     def add_func(
-        self, name: str, args: Tuple[Declare, ...], t_out: Ftypeout, block: Block,
+        self, name: str, args: Tuple[Symbol, ...], t_out: Ftypeout, block: Block,
     ) -> Program:
         if name in self.functypes:
             raise Exception("Function %s already exists in program." % name)
-        t_in = tuple(arg.t for arg in args)
+        t_in = tuple(arg.get_type() for arg in args)
         self.functypes[name] = (t_in, t_out)
         self.funcs[name] = ir.Function(
             self.module, convert_func_type(t_in, t_out), name

@@ -5,7 +5,8 @@ This file defines the codegen context and helpers.
 from llvmlite import ir
 from typing import Dict, Tuple
 
-from .type import Bool_t, Float32_t, Ftypein, Ftypeout, Int8_t, Int32_t, Type
+from .symbol import Symbol
+from .type import Ftypein, Ftypeout, Type
 
 
 class CodegenContext(object):
@@ -14,7 +15,7 @@ class CodegenContext(object):
     """
 
     def __init__(self, funcs: Dict[str, ir.Function]):
-        self.vars: Dict[str, ir.Value] = dict()
+        self.vars: Dict[Symbol, ir.Value] = dict()
         self.funcs: Dict[str, ir.Function] = funcs
 
 
