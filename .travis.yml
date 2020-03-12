@@ -14,6 +14,6 @@ install:
 script:
   - ./run_mypy.sh
   - ./run_tests.sh
-  - make -C examples run
+  - ./run_examples.sh
   - black --check .
   - black --diff .

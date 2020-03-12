@@ -257,12 +257,12 @@ Two metatypes are defined for the inputs and outputs of a function.
 
 ## Errors
 
-  * petra.ValidateError
+  * `petra.ValidateError`
 
     An exception thrown if Petra code does not confirm to certain
-    static checks such as a variable name conforming to a regex.
+    structural checks such as a variable name conforming to a regex.
 
-  * petra.TypeCheckError
+  * `petra.TypeCheckError`
 
     An exception thrown if Petra code fails to typecheck.
 
