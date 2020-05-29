@@ -82,4 +82,4 @@ class Var(Expr):
 
     def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> ir.Value:
         var = ctx.vars[self.symbol]
-        return builder.load(ctx.vars[self.symbol], name=self.symbol.unique_name())
+        return builder.load(ctx.vars[self.symbol])
