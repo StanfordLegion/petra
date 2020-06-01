@@ -7,7 +7,7 @@ from typing import Optional
 
 from .codegen import CodegenContext
 from .expr import Expr
-from .type import Int8_t, Int32_t, Type
+from .type import Int8_t, Int16_t, Int32_t, Int64_t, Type
 from .typecheck import TypeContext, TypeCheckError
 
 
@@ -39,8 +39,12 @@ class ArithmeticBinop(Expr):
         t_right = self.right.get_type()
         if (t_left, t_right) == (Int8_t, Int8_t):
             self.t = Int8_t
+        elif (t_left, t_right) == (Int16_t, Int16_t):
+            self.t = Int16_t
         elif (t_left, t_right) == (Int32_t, Int32_t):
             self.t = Int32_t
+        elif (t_left, t_right) == (Int64_t, Int64_t):
+            self.t = Int64_t
         else:
             raise TypeCheckError(
                 "Incompatible types for arithmetic binary operation: %s and %s"

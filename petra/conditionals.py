@@ -2,7 +2,11 @@
 This file defines Petra conditional control flow.
 """
 
+import contextlib
+from typing import ContextManager, Callable
+
 from llvmlite import ir
+from llvmlite.ir import builder
 
 from .block import Block
 from .codegen import CodegenContext
@@ -45,3 +49,69 @@ class If(Statement):
                 self.then_block.codegen(builder, ctx)
             with else_case:
                 self.else_block.codegen(builder, ctx)
+
+
+def _label_suffix(label: str, suffix: str) -> str:
+    """Returns (label + suffix) or a truncated version if it's too long.
+    Parameters
+    ----------
+    label : str
+        Label name
+    suffix : str
+        Label suffix
+    """
+    if len(label) > 50:
+        nhead = 25
+        return "".join([label[:nhead], "..", suffix])
+    else:
+        return label + suffix
+
+
+@contextlib.contextmanager  # type: ignore
+def while_then(
+    self: ir.IRBuilder, pred: Callable[[], ir.Value]
+) -> ContextManager[ir.Block]:
+    """
+    A context manager which sets up a conditional basic block based
+    on the given predicate (a i1 value).  If the conditional block
+    is not explicitly terminated, a branch will be added to the next
+    block.
+    """
+    bb = self.basic_block
+    bbwhile = self.append_basic_block(name=_label_suffix(bb.name, ".while"))
+    bbend = self.append_basic_block(name=_label_suffix(bb.name, ".endwhile"))
+
+    br = self.cbranch(pred(), bbwhile, bbend)
+
+    with self._branch_helper(bbwhile, bbend):
+        yield bbend
+        if self.basic_block.terminator is None:
+            br = self.cbranch(pred(), bbwhile, bbend)
+
+    self.position_at_end(bbend)
+
+
+class While(Statement):
+    def __init__(self, pred: Expr, while_block: Block):
+        self.pred = pred
+        self.while_block = while_block
+        self.validate()
+
+    def validate(self) -> None:
+        self.pred.validate()
+        self.while_block.validate()
+
+    def typecheck(self, ctx: TypeContext) -> None:
+        self.pred.typecheck(ctx)
+        t_pred = self.pred.get_type()
+        if t_pred != Bool_t:
+            raise TypeCheckError("While predicate cannot have type %s" % str(t_pred))
+        while_ctx = ctx.copy()
+        self.while_block.typecheck(while_ctx)
+
+    def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> None:
+        def pred() -> ir.Value:
+            return self.pred.codegen(builder, ctx)
+
+        with while_then(builder, pred):
+            self.while_block.codegen(builder, ctx)

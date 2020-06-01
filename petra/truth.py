@@ -8,7 +8,7 @@ from typing import Optional
 from .codegen import CodegenContext
 from .expr import Expr
 from .validate import ValidateError
-from .type import Bool_t, Int8_t, Int32_t, Type
+from .type import Bool_t, Int8_t, Int16_t, Int32_t, Int64_t, Type
 from .typecheck import TypeContext, TypeCheckError
 
 #
@@ -44,7 +44,12 @@ class Comparison(Expr):
         t_left = self.left.get_type()
         self.right.typecheck(ctx)
         t_right = self.right.get_type()
-        if (t_left, t_right) in ((Int8_t, Int8_t), (Int32_t, Int32_t)):
+        if (t_left, t_right) in (
+            (Int8_t, Int8_t),
+            (Int16_t, Int16_t),
+            (Int32_t, Int32_t),
+            (Int64_t, Int64_t),
+        ):
             self.t = Bool_t
         else:
             raise TypeCheckError(
@@ -118,7 +123,9 @@ class Equality(Comparison):
         if (t_left, t_right) in (
             (Bool_t, Bool_t),
             (Int8_t, Int8_t),
+            (Int16_t, Int16_t),
             (Int32_t, Int32_t),
+            (Int64_t, Int64_t),
         ):
             self.t = Bool_t
         else:

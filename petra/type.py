@@ -102,7 +102,9 @@ Ftypein = Tuple[Type, ...]
 Ftypeout = Union[Tuple[()], Type]
 
 Int8_t = IntType(8)
+Int16_t = IntType(16)
 Int32_t = IntType(32)
+Int64_t = IntType(64)
 
 Float32_t = FloatType(32)
 Float64_t = FloatType(64)
