@@ -97,6 +97,19 @@ class BoolType(ValueType[bool]):
         return ir.IntType(1)
 
 
+class PointerType(Type):
+    """
+    A pointer type.
+    """
+
+    def __init__(self, pointee: Type) -> None:
+        super().__init__("PointerType(%s)" % pointee)
+        self.pointee = pointee
+
+    def llvm_type(self) -> ir.Type:
+        return ir.PointerType(self.pointee.llvm_type())
+
+
 # Type aliases for functions.
 Ftypein = Tuple[Type, ...]
 Ftypeout = Union[Tuple[()], Type]
