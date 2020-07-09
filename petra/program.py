@@ -78,3 +78,6 @@ class Program(object):
         engine.finalize_object()
         engine.run_static_constructors()
         return engine
+
+    def load_library(self, filename: str) -> None:
+        binding.load_library_permanently(filename)

@@ -6,7 +6,7 @@ import re
 
 from abc import ABC, abstractmethod
 from llvmlite import ir
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 from .codegen import CodegenContext
 from .expr import Expr, Var
@@ -57,7 +57,7 @@ class Statement(ABC):
 
 
 #
-# Assign
+# DefineVar
 #
 
 
@@ -66,35 +66,40 @@ class DefineVar(Statement):
     Defines a new variable.
     """
 
-    def __init__(self, symbol: Symbol, value: Expr):
+    def __init__(self, symbol: Symbol, value: Optional[Expr] = None):
         self.symbol = symbol
         self.value = value
         self.validate()
 
     def validate(self) -> None:
         self.symbol.validate()
-        self.value.validate()
+        if self.value is not None:
+            self.value.validate()
 
     def typecheck(self, ctx: TypeContext) -> None:
-        self.value.typecheck(ctx)
+        if self.value is not None:
+            self.value.typecheck(ctx)
 
         if self.symbol in ctx.variables:
             raise TypeCheckError("Variable '%s' declared multiple times" % self.symbol)
         ctx.variables.add(self.symbol)
 
-        expected_type = self.value.get_type()
-        if self.symbol.get_type() != expected_type:
-            raise TypeCheckError(
-                "Cannot assign expression of type %s to variable '%s' of"
-                "type %s" % (expected_type, self.symbol, self.symbol.get_type())
-            )
+        if self.value is not None:
+            expected_type = self.value.get_type()
+            if self.symbol.get_type() != expected_type:
+                raise TypeCheckError(
+                    "Cannot assign expression of type %s to variable '%s' of"
+                    "type %s" % (expected_type, self.symbol, self.symbol.get_type())
+                )
 
     def codegen(self, builder: ir.IRBuilder, ctx: CodegenContext) -> None:
-        value = self.value.codegen(builder, ctx)
+        if self.value is not None:
+            value = self.value.codegen(builder, ctx)
         ctx.vars[self.symbol] = builder.alloca(
             self.symbol.get_type().llvm_type(), name=self.symbol.unique_name()
         )
-        builder.store(value, ctx.vars[self.symbol])
+        if self.value is not None:
+            builder.store(value, ctx.vars[self.symbol])
 
 
 #

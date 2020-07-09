@@ -4,7 +4,7 @@ This file defines Petra types.
 
 from abc import ABC, abstractmethod
 from llvmlite import ir
-from typing import Generic, Optional, Tuple, TypeVar, Union
+from typing import Generic, Optional, Tuple, TypeVar, Union, List, Dict
 
 from .validate import ValidateError
 
@@ -61,7 +61,7 @@ class IntType(ValueType[int]):
 
 class FloatType(ValueType[float]):
     """
-    An floating point type.
+    A floating point type.
     """
 
     def __init__(self, bits: int, name: Optional[str] = None):
@@ -84,7 +84,7 @@ class FloatType(ValueType[float]):
 
 class BoolType(ValueType[bool]):
     """
-    An boolean type.
+    A boolean type.
     """
 
     def __init__(self) -> None:
@@ -108,6 +108,39 @@ class PointerType(Type):
 
     def llvm_type(self) -> ir.Type:
         return ir.PointerType(self.pointee.llvm_type())
+
+
+class StructType(Type):
+    """
+    A struct type.
+    """
+
+    def __init__(self, elements: Dict[str, Type]) -> None:
+        super().__init__("StructType(%s)" % elements)
+        self.elements = tuple(elements.values())
+        llvm_elements = [t.llvm_type() for t in elements.values()]
+        self.struct_type = ir.LiteralStructType(llvm_elements)
+        self.name_to_index: Dict[str, int] = {}
+        for i, name in enumerate(elements.keys()):
+            self.name_to_index[name] = i
+
+    def llvm_type(self) -> ir.Type:
+        return self.struct_type
+
+
+class ArrayType(Type):
+    """
+    An array type.
+    """
+
+    def __init__(self, element: Type, length: int) -> None:
+        super().__init__("ArrayType(%s, %s)" % (element, length))
+        self.element = element
+        self.length = length
+        self.array_type = ir.ArrayType(self.element.llvm_type(), self.length)
+
+    def llvm_type(self) -> ir.Type:
+        return self.array_type
 
 
 # Type aliases for functions.

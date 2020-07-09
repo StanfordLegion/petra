@@ -7,6 +7,7 @@ from .block import Block
 from .call import Call
 from .conditionals import If, While
 from .dereference import Deref
+from .aggregate import GetElement, SetElement
 from .constant import Bool, Float32, Float64, Int8, Int16, Int32, Int64
 from .expr import Var
 from .program import Program
@@ -23,5 +24,7 @@ from .type import (
     Int32_t,
     Int64_t,
     PointerType,
+    StructType,
+    ArrayType,
 )
 from .typecheck import TypeCheckError
